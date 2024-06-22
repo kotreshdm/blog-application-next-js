@@ -1,7 +1,11 @@
 const DB_URI =
   "mongodb+srv://scriptographics:T1MEuge47bWBEdB6@mydb.434ydda.mongodb.net/?retryWrites=true&w=majority&appName=mydb2";
 const MONGODB_DB = "myBlog";
-const API = "http://localhost:3000/api";
+
+const API =
+  process.env.NODE_ENV === "production"
+    ? "https://techpack-desiginers-app.netlify.app/api"
+    : "http://localhost:3000/api";
 
 const NEXTAUTH_SECRET = "YOUR_SECRET";
 
