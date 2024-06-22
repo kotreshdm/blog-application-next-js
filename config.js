@@ -1,10 +1,7 @@
 const DB_URI =
-  "mongodb+srv://scriptographics:7oD2CuWBhYFyeWwk@mydb.434ydda.mongodb.net/?retryWrites=true&w=majority&appName=mydb";
-
-const API =
-  process.env.NODE_ENV === "production"
-    ? "https://techpack-desiginers-app.netlify.app/api"
-    : "http://localhost:3000/api";
+  "mongodb+srv://scriptographics:T1MEuge47bWBEdB6@mydb.434ydda.mongodb.net/?retryWrites=true&w=majority&appName=mydb2";
+const MONGODB_DB = "myBlog";
+const API = "http://localhost:3000/api";
 
 const NEXTAUTH_SECRET = "YOUR_SECRET";
 
@@ -23,6 +20,7 @@ const GMAIL_AUTH_PASS = "xxxxxx";
 module.exports = {
   DB_URI,
   API,
+  MONGODB_DB,
   NEXTAUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,

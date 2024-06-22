@@ -1,9 +1,17 @@
-import mongoose from "mongoose";
-const dbConnect = async () => {
-  if (mongoose.connection.readyState >= 1) {
-    return;
+import { MongoClient } from "mongodb";
+
+const uri = process.env.DB_URI;
+const dbName = process.env.MONGODB_DB;
+const client = new MongoClient(uri);
+
+async function dbConnect() {
+  try {
+    await client.connect();
+    return client.db(dbName);
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
   }
-  mongoose.connect(process.env.DB_URI);
-};
+}
 
 export default dbConnect;

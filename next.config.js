@@ -7,6 +7,7 @@ const nextConfig = {
   },
   env: {
     DB_URI: config.DB_URI,
+    MONGODB_DB: config.MONGODB_DB,
     API: config.API,
     NEXTAUTH_SECRET: config.NEXTAUTH_SECRET,
     NEXTAUTH_URL: config.NEXTAUTH_URL,

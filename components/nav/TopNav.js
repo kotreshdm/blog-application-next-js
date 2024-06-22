@@ -1,9 +1,12 @@
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+// import { useSession, signOut } from "next-auth/react";
 
 export default function TopNav() {
-  const { data, status, loading } = useSession();
+  // const { data, status, loading } = useSession();
+  const data = "tt";
+  const status = "bb";
+  const loading = false;
   return (
     <nav className='nav shadow justify-content-between mb-3'>
       <div className='d-flex justify-content-start'>
@@ -34,7 +37,8 @@ export default function TopNav() {
 
             <a
               className='nav-link pointer'
-              onClick={() => signOut({ callbackUrl: "/login" })}>
+              // onClick={() => signOut({ callbackUrl: "/login" })}
+            >
               Logout
             </a>
           </>
