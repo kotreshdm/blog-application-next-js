@@ -8,11 +8,6 @@ import { ThemeProvider } from "@/context/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata = {
-//   title: "Blog application",
-//   description: "Techpack blog",
-// };
-
 export default function RootLayout({ children }) {
   return (
     <html lang='en'>
