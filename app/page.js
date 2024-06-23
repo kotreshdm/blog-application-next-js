@@ -6,19 +6,9 @@ export default function Home() {
           <h1 className='display-1 fw-bold'>Next Blog</h1>
           <hr />
           <p className='lead'>
-            Multi User Blogging Platform built using Next.js & React
+            Multi User Blogging Platform built using Next.js & React Kotresh
           </p>
         </div>
-
-        {/* <Tags /> */}
-
-        {/* <div className='col-lg-6 offset-lg-3'>
-          {blogs?.map((blog) => (
-            <BlogCard key={blog._id} blog={blog} />
-          ))}
-        </div> */}
-
-        {/* <Pagination page={page} totalPages={totalPages} /> */}
       </div>
     </div>
   );

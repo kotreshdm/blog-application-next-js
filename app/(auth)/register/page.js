@@ -4,8 +4,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
-  const [name, setName] = useState("ds");
-  const [email, setEmail] = useState("dsd@dad.com");
+  const [name, setName] = useState("ghgf");
+  const [email, setEmail] = useState("gh@gfd.com");
   const [password, setPassword] = useState("dsf");
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +15,7 @@ export default function Register() {
     e.preventDefault();
     try {
       setLoading(true);
+      console.log(process.env.API, "process.env.API");
       const response = await fetch(`${process.env.API}/register`, {
         method: "POST",
         headers: {
@@ -28,14 +29,13 @@ export default function Register() {
       });
 
       const data = await response.json();
-      console.log("data", data);
       if (!response.ok) {
         toast.error(data.err);
         setLoading(false);
       } else {
         toast.success(data.success);
-        setLoading(false);
         // router.push("/login");
+        setLoading(false);
       }
     } catch (err) {
       console.log(err);
