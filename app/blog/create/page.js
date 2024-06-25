@@ -1,6 +1,7 @@
 "use client";
 import { useBlog } from "@/context/blog";
 import BlogTitle from "@/components/blog/BlogTitle";
+import BlogContent from "@/components/blog/BlogContent";
 
 export default function BlogCreatePage() {
   const {
@@ -34,6 +35,9 @@ export default function BlogCreatePage() {
         </div>
       </div>
       {step === 1 && <BlogTitle onNextStep={handleNextStep} />}
+      {step === 2 && (
+        <BlogContent onPrevStep={handlePrevStep} onNextStep={handleNextStep} />
+      )}
       {step}
     </>
   );
