@@ -5,7 +5,7 @@ export default function Home() {
         <div className='text-center'>
           <h1 className='display-1 fw-bold'>Next Blog</h1>
           <hr />
-          <p className='lead'>React Kotresh</p>
+          <p className='lead'>React Developer </p>
         </div>
       </div>
     </div>
