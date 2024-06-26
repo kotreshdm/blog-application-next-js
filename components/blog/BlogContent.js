@@ -12,7 +12,7 @@ export default function BlogContent({ onNextStep, onPrevStep }) {
   // context
   const { markdown, setMarkdown } = useBlog();
   return (
-    <div className={"container"}>
+    <div>
       <MdEditor
         value={markdown}
         style={{ height: "80vh" }}

@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useTheme } from "@/context/theme";
 import editorDarkCss from "@/utils/editorDarkCss";
+import toast from "react-hot-toast";
 const BlogContext = createContext();
 
 export const BlogProvider = ({ children }) => {
@@ -12,6 +13,8 @@ export const BlogProvider = ({ children }) => {
   // multi step form
   const [step, setStep] = useState(1);
   // tags
+  const [tagName, setTagName] = useState("");
+  const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   // featured image
   const [featuredImage, setFeaturedImage] = useState("");
@@ -22,7 +25,7 @@ export const BlogProvider = ({ children }) => {
 
   useEffect(() => {
     const customStyle = document.createElement("style");
-    customStyle.classList.add("editor-dark-theme"); // add a class for identification
+    customStyle.classList.add("editor-dark-theme");
     customStyle.innerHTML = editorDarkCss;
 
     const existingStyle = document.querySelector(".editor-dark-theme");
@@ -54,6 +57,43 @@ export const BlogProvider = ({ children }) => {
     localStorage.setItem("savedMarkdown", markdown);
   }, [title, markdown]);
 
+  const tagCreate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${process.env.API}/crud/tag`, {
+        method: "POST",
+        body: JSON.stringify({ name: tagName }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data?.err);
+      } else {
+        setTags([data, ...tags]);
+        setTagName("");
+        toast.success(`"${data.name}" tag is created`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const tagList = async () => {
+    try {
+      const response = await fetch(`${process.env.API}/tags`);
+      const data = await response.json();
+      console.log(data);
+      if (!response.ok) {
+        toast.error(data?.err);
+      } else {
+        setTags(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <BlogContext.Provider
       value={{
@@ -61,8 +101,14 @@ export const BlogProvider = ({ children }) => {
         setTitle,
         markdown,
         setMarkdown,
+        tagName,
+        setTagName,
+        tags,
+        setTags,
         selectedTags,
         setSelectedTags,
+        tagCreate,
+        tagList,
         featuredImage,
         setFeaturedImage,
         handleNextStep,

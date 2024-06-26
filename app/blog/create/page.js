@@ -2,6 +2,7 @@
 import { useBlog } from "@/context/blog";
 import BlogTitle from "@/components/blog/BlogTitle";
 import BlogContent from "@/components/blog/BlogContent";
+import BlogTags from "@/components/blog/BlogTags";
 
 export default function BlogCreatePage() {
   const {
@@ -34,10 +35,18 @@ export default function BlogCreatePage() {
           <div onClick={() => setStep(5)}>{current(5)} Review and Submit</div>
         </div>
       </div>
-      {step === 1 && <BlogTitle onNextStep={handleNextStep} />}
-      {step === 2 && (
-        <BlogContent onPrevStep={handlePrevStep} onNextStep={handleNextStep} />
-      )}
+      <div className='container my-5'>
+        {step === 1 && <BlogTitle onNextStep={handleNextStep} />}
+        {step === 2 && (
+          <BlogContent
+            onPrevStep={handlePrevStep}
+            onNextStep={handleNextStep}
+          />
+        )}
+        {step === 3 && (
+          <BlogTags onPrevStep={handlePrevStep} onNextStep={handleNextStep} />
+        )}
+      </div>
       {step}
     </>
   );

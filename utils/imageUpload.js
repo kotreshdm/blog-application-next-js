@@ -13,7 +13,7 @@ export const imageUpload = (file) => {
       async (uri) => {
         try {
           // make a POST request to api to upload image
-          const response = await fetch("/api/curd/uploads", {
+          const response = await fetch("/api/crud/uploads", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
