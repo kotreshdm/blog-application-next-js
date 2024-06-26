@@ -9,10 +9,19 @@ const NEXTAUTH_SECRET = "techblog6504A#";
 
 const GOOGLE_CLIENT_ID = "xxx-xxx.apps.googleusercontent.com";
 const GOOGLE_CLIENT_SECRET = "xxx-xxx-xxx";
+
+// merncms
+const CLOUDINARY_CLOUD_NAME = "ddc0fo7vs";
+const CLOUDINARY_API_KEY = "852856672128175";
+const CLOUDINARY_API_SECRET = "hfPxrERtb610m3h4BI7Mpp3NusY";
+
 module.exports = {
   DB_URI,
   API,
   NEXTAUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
 };
