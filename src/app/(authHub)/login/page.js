@@ -24,11 +24,11 @@ export default function Login() {
       email,
       password,
     });
-
     setLoading(false);
 
     if (result.error) {
-      toast.error("Login Errors", result.error);
+      console.log(result);
+      toast.error(`${result.error}`);
     } else {
       toast.success("Login successful");
       router.push(callbackUrl);
