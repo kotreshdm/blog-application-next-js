@@ -3,7 +3,7 @@ const DB_URI =
 
 const API =
   process.env.NODE_ENV === "production"
-    ? "https://xxx.vercel.app/api"
+    ? "https://techpack-desiginers-app.netlify.app/api"
     : "http://localhost:3000/api";
 
 const NEXTAUTH_SECRET = "fsdfsewqerrSDFfsdSDFSDCVWRWVSCV";
