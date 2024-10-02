@@ -2,11 +2,11 @@
 import { useTheme } from "@/context/theme";
 import Link from "next/link";
 import { MdOutlineLightMode, MdOutlineDarkMode } from "react-icons/md";
-// import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 export default function TopNav() {
-  // const { data, status, loading } = useSession();
-  // console.log(data, status);
+  const { data, status, loading } = useSession();
+
   const { theme, toggleTheme } = useTheme();
   return (
     <nav className='nav shadow justify-content-between mb-3'>
@@ -16,7 +16,7 @@ export default function TopNav() {
         </Link>
       </div>
       <div className='d-flex align-items-center'>
-        {/* {status === "authenticated" ? (
+        {status === "authenticated" ? (
           <>
             <Link className='nav-link' href='/dashboard/user'>
               {data?.user?.name}
@@ -48,7 +48,7 @@ export default function TopNav() {
               Register
             </Link>
           </div>
-        )} */}
+        )}
         <button className='nav-link' onClick={toggleTheme}>
           {theme === "light" ? <MdOutlineDarkMode /> : <MdOutlineLightMode />}
         </button>

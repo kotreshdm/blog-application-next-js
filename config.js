@@ -1,13 +1,12 @@
 const DB_URI =
-  process.env.NODE_ENV ===
-  "mongodb+srv://kotreshdm:Mahindra13#23@blog-db.jzamp.mongodb.net/?retryWrites=true&w=majority&appName=blog-db";
+  "mongodb+srv://kotreshdm:jaVOSmlsH0BmoOaa@blog-db.jzamp.mongodb.net/?retryWrites=true&w=majority&appName=blog-db";
 
 const API =
   process.env.NODE_ENV === "production"
     ? "https://xxx.vercel.app/api"
     : "http://localhost:3000/api";
 
-// const NEXTAUTH_SECRET = "YOUR_SECRET";
+const NEXTAUTH_SECRET = "fsdfsewqerrSDFfsdSDFSDCVWRWVSCV";
 
 // const GOOGLE_CLIENT_ID = "xxx-xxx.apps.googleusercontent.com";
 // const GOOGLE_CLIENT_SECRET = "xxx-xxx-xxx";
@@ -24,7 +23,7 @@ const API =
 module.exports = {
   DB_URI,
   API,
-  // NEXTAUTH_SECRET,
+  NEXTAUTH_SECRET,
   // GOOGLE_CLIENT_ID,
   // GOOGLE_CLIENT_SECRET,
   // CLOUDINARY_CLOUD_NAME,
