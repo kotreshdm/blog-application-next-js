@@ -1,5 +1,5 @@
 {
-  "name": "myblog2",
+  "name": "techpack-designers-app-sg",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,20 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "bootstrap": "^5.3.3",
-    "cloudinary": "^2.2.0",
-    "highlight.js": "^11.9.0",
-    "markdown-it": "^14.1.0",
-    "mongoose": "^8.4.3",
-    "mongoose-unique-validator": "^5.0.0",
-    "next": "14.2.4",
-    "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
-    "react-hot-toast": "^2.4.1",
-    "react-image-file-resizer": "^0.4.8",
-    "react-markdown-editor-lite": "^1.3.4",
-    "slugify": "^1.6.6"
+    "next": "14.2.14"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.14"
   }
 }
