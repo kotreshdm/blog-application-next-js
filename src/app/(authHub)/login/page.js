@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const LoginPage = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Loading...1234</div>}>
       <LoginComponent />
     </Suspense>
   );
