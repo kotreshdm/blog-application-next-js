@@ -1,6 +1,5 @@
 import axios from "axios";
-console.log(process.env.DB_URI);
-console.log(process.env.API);
+
 const api = axios.create({
   baseURL: process.env.API || "http://localhost:3000/api",
   headers: {

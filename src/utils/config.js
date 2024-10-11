@@ -1,9 +1,10 @@
-const DB_URI =
-  "mongodb+srv://kotreshdm:jaVOSmlsH0BmoOaa@blog-db.jzamp.mongodb.net/?retryWrites=true&w=majority&appName=blog-db";
+const DB_URI = process.env.DB_URI;
 
-const API = "https://techpack-desiginers-app.netlify.app/api";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 const NEXTAUTH_SECRET = "fsdfsewqerrSDFfsdSDFSDCVWRWVSCV";
+
+console.log(process.env);
 
 // const GOOGLE_CLIENT_ID = "xxx-xxx.apps.googleusercontent.com";
 // const GOOGLE_CLIENT_SECRET = "xxx-xxx-xxx";
