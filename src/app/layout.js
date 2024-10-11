@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Navbar from "../components/Navbar/Navbar";
-
+import { Toaster } from "react-hot-toast";
 function getInitialDarkMode() {
   if (typeof window !== "undefined") {
     const savedMode = localStorage.getItem("theme");
@@ -53,6 +53,7 @@ export default function RootLayout({ children }) {
     <html lang='en'>
       <body>
         <ThemeProvider theme={theme}>
+          <Toaster />
           <CssBaseline />
           <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
           {children}

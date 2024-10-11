@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const config = require("./config.js"); // Use require instead of import
+const config = require("./src/utils/config.js"); // Use require instead of import
 
 const nextConfig = {
   images: {
