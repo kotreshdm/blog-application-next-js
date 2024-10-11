@@ -1,10 +1,7 @@
 const DB_URI =
   "mongodb+srv://kotreshdm:jaVOSmlsH0BmoOaa@blog-db.jzamp.mongodb.net/?retryWrites=true&w=majority&appName=blog-db";
 
-const API =
-  process.env.NODE_ENV === "production"
-    ? "https://techpack-desiginers-app.netlify.app/api"
-    : "http://localhost:3000/api";
+const API = "https://techpack-desiginers-app.netlify.app/api";
 
 const NEXTAUTH_SECRET = "fsdfsewqerrSDFfsdSDFSDCVWRWVSCV";
 
