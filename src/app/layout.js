@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Navbar from "../components/Navbar/Navbar";
+import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 function getInitialDarkMode() {
   if (typeof window !== "undefined") {
@@ -51,14 +52,16 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang='en'>
-      <body>
+      <SessionProvider>
         <ThemeProvider theme={theme}>
-          <Toaster />
-          <CssBaseline />
-          <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-          {children}
+          <body>
+            <Toaster />
+            <CssBaseline />
+            <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+            {children}
+          </body>
         </ThemeProvider>
-      </body>
+      </SessionProvider>
     </html>
   );
 }

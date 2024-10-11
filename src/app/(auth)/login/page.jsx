@@ -1,11 +1,95 @@
-import React from 'react'
+"use client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useCallback, useMemo } from "react";
+import { Button, Container, Typography, Box } from "@mui/material";
+import FormTextField from "@/components/form/formTextField/FormTextField";
+import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
-const page = () => {
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const handleEmailChange = useCallback((e) => setEmail(e.target.value), []);
+  const handlePasswordChange = useCallback(
+    (e) => setPassword(e.target.value),
+    []
+  );
+
+  const emailField = useMemo(
+    () => (
+      <FormTextField
+        name='email'
+        label='Email Address'
+        value={email}
+        onChange={handleEmailChange}
+        autoComplete='email'
+        autoFocus
+      />
+    ),
+    [email, handleEmailChange]
+  );
+
+  const passwordField = useMemo(
+    () => (
+      <FormTextField
+        name='password'
+        label='Password'
+        type='password'
+        value={password}
+        onChange={handlePasswordChange}
+        autoComplete='current-password'
+      />
+    ),
+    [password, handlePasswordChange]
+  );
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    setLoading(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Login successful");
+      router.push(callbackUrl);
+    }
+  };
+
   return (
-    <div>
-      page
-    </div>
-  )
+    <Container maxWidth='xs'>
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography component='h1' variant='h5'>
+          Login
+        </Typography>
+        <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          {emailField}
+          {passwordField}
+          <Button
+            type='submit'
+            fullWidth
+            variant='contained'
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+        </Box>
+      </Box>
+    </Container>
+  );
 }
-
-export default page

@@ -36,7 +36,7 @@ export default function Register() {
       console.error("Registration failed:", error);
       if (error.status === 409) {
         toast.error(
-          "This email is already registered. Please use a different email or try logging in!."
+          "This email is already registered. Please use a different email or try logging in."
         );
       } else {
         toast.error(

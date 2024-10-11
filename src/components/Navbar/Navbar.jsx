@@ -1,9 +1,18 @@
 import * as React from "react";
-import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Box,
+} from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode"; // Sun icon for light mode
 import DarkModeIcon from "@mui/icons-material/DarkMode"; // Moon icon for dark mode
 import { keyframes } from "@mui/system";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { toTitleCase } from "@/utils/helperFunctions/toTitleCase";
 
 // Define animations
 const sunRotate = keyframes`
@@ -25,44 +34,62 @@ const moonBounce = keyframes`
 `;
 
 export default function Navbar({ darkMode, toggleDarkMode }) {
+  const { data: session, status, loading } = useSession();
   return (
     <AppBar position='sticky'>
       <Toolbar>
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
           <Link href='/'>My MUI App</Link>
         </Typography>
-        <Link
-          href='/login'
-          style={{ textDecoration: "none", marginRight: "15px" }}
-        >
-          <Button
-            color='inherit'
-            sx={{
-              color: "#fff",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              },
-            }}
-          >
-            Login
-          </Button>
-        </Link>
-        <Link
-          href='/register'
-          style={{ textDecoration: "none", marginRight: "15px" }}
-        >
-          <Button
-            color='inherit'
-            sx={{
-              color: "#fff",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              },
-            }}
-          >
-            Register
-          </Button>
-        </Link>
+        {status === "authenticated" ? (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography sx={{ mr: 2, textTransform: "capitalize" }}>
+              Welcome, {toTitleCase(session.user.name) || session.user.email}
+            </Typography>
+            <Button
+              variant='outlined'
+              color='inherit'
+              onClick={() => signOut({ callbackUrl: "/" })}
+            >
+              Sign out
+            </Button>
+          </Box>
+        ) : (
+          <>
+            <Link
+              href='/login'
+              style={{ textDecoration: "none", marginRight: "15px" }}
+            >
+              <Button
+                color='inherit'
+                sx={{
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }}
+              >
+                Login
+              </Button>
+            </Link>
+            <Link
+              href='/register'
+              style={{ textDecoration: "none", marginRight: "15px" }}
+            >
+              <Button
+                color='inherit'
+                sx={{
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }}
+              >
+                Register
+              </Button>
+            </Link>
+          </>
+        )}
 
         <IconButton
           onClick={toggleDarkMode}
