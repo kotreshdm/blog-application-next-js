@@ -39,16 +39,34 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
     <AppBar position='sticky'>
       <Toolbar>
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-          <Link href='/'>My MUI App</Link>
+          <Link
+            style={{
+              textTransform: "capitalize",
+              color: "#fff",
+              textDecoration: "none",
+            }}
+            href='/'
+          >
+            Techpack desiginers
+          </Link>
         </Typography>
         {status === "authenticated" ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography sx={{ mr: 2, textTransform: "capitalize" }}>
+            <Link
+              href='/dashboard'
+              style={{
+                textTransform: "capitalize",
+                color: "#fff",
+                textDecoration: "none",
+                marginRight: "15px",
+              }}
+            >
               Welcome, {toTitleCase(session.user.name) || session.user.email}
-            </Typography>
+            </Link>
             <Button
               variant='outlined'
               color='inherit'
+              sx={{ textTransform: "capitalize" }}
               onClick={() => signOut({ callbackUrl: "/" })}
             >
               Sign out
@@ -56,10 +74,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
           </Box>
         ) : (
           <>
-            <Link
-              href='/login'
-              style={{ textDecoration: "none", marginRight: "15px" }}
-            >
+            <Link href='/login' style={{ textDecoration: "none" }}>
               <Button
                 color='inherit'
                 sx={{
@@ -94,7 +109,6 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
         <IconButton
           onClick={toggleDarkMode}
           sx={{
-            mr: 2,
             "&:hover": {
               backgroundColor: "rgba(255, 255, 255, 0.1)",
             },

@@ -52,16 +52,16 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang='en'>
-      <SessionProvider>
-        <ThemeProvider theme={theme}>
-          <body>
+      <body>
+        <SessionProvider>
+          <ThemeProvider theme={theme}>
             <Toaster />
             <CssBaseline />
             <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
             {children}
-          </body>
-        </ThemeProvider>
-      </SessionProvider>
+          </ThemeProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

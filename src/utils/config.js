@@ -3,9 +3,7 @@ const DB_URI = process.env.DB_URI;
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 const NEXTAUTH_SECRET = "fsdfsewqerrSDFfsdSDFSDCVWRWVSCV";
-
-console.log(process.env);
-
+const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
 // const GOOGLE_CLIENT_ID = "xxx-xxx.apps.googleusercontent.com";
 // const GOOGLE_CLIENT_SECRET = "xxx-xxx-xxx";
 
