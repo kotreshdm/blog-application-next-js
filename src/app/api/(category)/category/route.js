@@ -1,4 +1,4 @@
-import Category from "@/models/Category";
+import Category from "@/app/dashboard/category/page";
 import { getSession } from "next-auth/react";
 
 // In your API route
