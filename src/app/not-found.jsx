@@ -3,6 +3,7 @@ import React from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function NotFound() {
   const router = useRouter();
@@ -29,14 +30,21 @@ export default function NotFound() {
         <Typography variant='body1' sx={{ mb: 4 }}>
           Oops! The page you are looking for doesn't exist or has been moved.
         </Typography>
-        <Button
-          variant='contained'
-          color='primary'
-          size='large'
-          onClick={() => router.push("/")}
+        <Link
+          href={`/api/auth/signin?callbackUrl=${encodeURIComponent(
+            window.location.href
+          )}`}
+          passHref
         >
-          Go to Home Page
-        </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            size='large'
+            onClick={() => router.push("/")}
+          >
+            Go to Home Page
+          </Button>
+        </Link>
       </Box>
     </Container>
   );

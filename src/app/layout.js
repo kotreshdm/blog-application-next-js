@@ -55,7 +55,15 @@ export default function RootLayout({ children }) {
       <body>
         <SessionProvider>
           <ThemeProvider theme={theme}>
-            <Toaster />
+            <Toaster
+              position='bottom-right'
+              toastOptions={{
+                duration: 10000,
+                style: {
+                  animation: "fade-out 0.6s, fade-in 0.6s",
+                },
+              }}
+            />
             <CssBaseline />
             <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
             {children}

@@ -19,11 +19,11 @@ const drawerWidth = 240;
 
 const menuItems = [
   { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
-  { text: "Categories", icon: <CategoryIcon />, path: "/dashboard/categories" },
+  { text: "Categories", icon: <CategoryIcon />, path: "/dashboard/category" },
   { text: "Blogs", icon: <ArticleIcon />, path: "/dashboard/blogs" },
 ];
 
-const LeftMenu = () => {
+const DashboardNavbar = () => {
   const pathname = usePathname();
 
   return (
@@ -60,4 +60,4 @@ const LeftMenu = () => {
   );
 };
 
-export default LeftMenu;
+export default DashboardNavbar;

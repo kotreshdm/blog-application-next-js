@@ -1,6 +1,13 @@
-import { Box, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Typography,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const withAuth = (Component) => {
   return (props) => {
@@ -23,23 +30,41 @@ const withAuth = (Component) => {
 
     if (!session?.user) {
       return (
-        <div style={{ textAlign: "center" }}>
-          <div>Access denied. Please log in.</div>
-          <Link
-            href={`/api/auth/signin?callbackUrl=${encodeURIComponent(
-              window.location.href
-            )}`}
-            passHref
+        <Container maxWidth='sm'>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100vh",
+              textAlign: "center",
+            }}
           >
-            <Button
-              variant='contained'
-              color='primary'
-              style={{ marginTop: "1rem" }}
+            <ErrorOutlineIcon
+              sx={{ fontSize: 100, color: "warning.main", mb: 2 }}
+            />
+            <Typography variant='h1' component='h1' gutterBottom>
+              403
+            </Typography>
+            <Typography variant='h4' component='h2' gutterBottom>
+              Access Denied
+            </Typography>
+            <Typography variant='body1' sx={{ mb: 2 }}>
+              Please log in to access this page.
+            </Typography>
+            <Link
+              href={`/api/auth/signin?callbackUrl=${encodeURIComponent(
+                window.location.href
+              )}`}
+              passHref
             >
-              Login
-            </Button>
-          </Link>
-        </div>
+              <Button variant='contained' color='primary'>
+                Login
+              </Button>
+            </Link>
+          </Box>
+        </Container>
       );
     }
 
