@@ -43,7 +43,7 @@ export async function DELETE(req) {
 
     if (!deletedCategory) {
       return NextResponse.json(
-        { success: false, message: "Category not found" },
+        { success: false, message: "Category not found!" },
         { status: 404 }
       );
     }
