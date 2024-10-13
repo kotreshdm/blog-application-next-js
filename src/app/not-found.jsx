@@ -20,29 +20,21 @@ export default function NotFound() {
           textAlign: "center",
         }}
       >
-        <ErrorOutlineIcon sx={{ fontSize: 100, color: "error.main", mb: 4 }} />
+        <ErrorOutlineIcon
+          sx={{ fontSize: 100, color: "warning.main", mb: 2 }}
+        />
         <Typography variant='h1' component='h1' gutterBottom>
           404
         </Typography>
         <Typography variant='h4' component='h2' gutterBottom>
           Page Not Found
         </Typography>
-        <Typography variant='body1' sx={{ mb: 4 }}>
-          Oops! The page you are looking for doesn't exist or has been moved.
+        <Typography variant='body1' sx={{ mb: 2 }}>
+          We couldn&apos;t find the page you&apos;re looking for.
         </Typography>
-        <Link
-          href={`/api/auth/signin?callbackUrl=${encodeURIComponent(
-            window.location.href
-          )}`}
-          passHref
-        >
-          <Button
-            variant='contained'
-            color='primary'
-            size='large'
-            onClick={() => router.push("/")}
-          >
-            Go to Home Page
+        <Link href='/' passHref>
+          <Button variant='contained' color='primary'>
+            Go to Home
           </Button>
         </Link>
       </Box>
