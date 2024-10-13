@@ -1,21 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { TextField, Button, Box, Typography, Stack } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
+import apiService from "@/utils/api";
+import toast from "react-hot-toast";
 
-const AddEditCategory = ({ setOpen }) => {
+const AddEditCategory = ({ setOpen, onCategoryAdded }) => {
   const [categoryName, setCategoryName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement category creation logic here
-    console.log("Creating category:", categoryName);
-    // After creating, you might want to close the modal or navigate back
-    setOpen(false);
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await apiService.post("/categories", {
+        name: categoryName,
+      });
+
+      toast.success(`${response.data.category.name} created successfully!`);
+
+      // Call the onCategoryAdded callback to update the parent component
+      if (onCategoryAdded) {
+        onCategoryAdded(response.data.category);
+      }
+
+      // Close the modal or dialog
+      setOpen(false);
+    } catch (error) {
+      console.error("Error creating category:", error);
+      setError("Failed to create category. Please try again.");
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    // Close the modal or navigate back without saving
     setOpen(false);
   };
 
@@ -31,20 +61,24 @@ const AddEditCategory = ({ setOpen }) => {
         onChange={(e) => setCategoryName(e.target.value)}
         margin='normal'
         required
+        error={!!error}
+        helperText={error}
       />
       <Stack direction='row' spacing={2} sx={{ mt: 2 }}>
         <Button
           type='submit'
           variant='contained'
           color='primary'
+          disabled={isLoading}
           sx={{ textTransform: "capitalize" }}
         >
-          Create Category
+          {isLoading ? <CircularProgress size={24} /> : "Create Category"}
         </Button>
         <Button
           variant='outlined'
           color='secondary'
           onClick={handleCancel}
+          disabled={isLoading}
           sx={{ textTransform: "capitalize" }}
         >
           Cancel

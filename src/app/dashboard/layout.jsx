@@ -9,7 +9,7 @@ function ProtectedLayout({ children }) {
       <DashboardNavbar />
       <Box
         component='main'
-        sx={{ flexGrow: 1, bgcolor: "background.default", pl: 3 }}
+        sx={{ flexGrow: 1, bgcolor: "background.default", pl: 3, pr: 3 }}
       >
         {children}
       </Box>
@@ -17,4 +17,5 @@ function ProtectedLayout({ children }) {
   );
 }
 
-export default withAuth(ProtectedLayout);
+export default ProtectedLayout;
+// export default withAuth(ProtectedLayout);

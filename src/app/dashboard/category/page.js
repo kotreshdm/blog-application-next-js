@@ -2,13 +2,38 @@
 
 import { Button, IconButton, Stack } from "@mui/material";
 import MyTable from "@/components/dashboard/AgGridTable";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AddEditCategory from "@/components/dashboard/category/AddEditCategory";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import apiService from "@/utils/api";
 
 function Category() {
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await apiService.get("/categories", {});
+        if (!response.status === 200) {
+          throw new Error("Failed to fetch categories");
+        }
+        setCategories(response.data.categories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleCategoryAdded = (newCategory) => {
+    setCategories((prevCategories) => [newCategory, ...prevCategories]);
+  };
   const handleAddCategory = () => {
     setOpen(true);
   };
@@ -16,7 +41,7 @@ function Category() {
     console.log("Edit clicked");
   };
   const updateOpen = useCallback(() => {
-    setOpen(false);
+    setOpen(true);
   }, []);
 
   const ButtonCellRenderer = useCallback((params) => {
@@ -40,48 +65,16 @@ function Category() {
     );
   }, []);
 
-  const [data, setData] = useState([
-    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-    { make: "Ford", model: "F-Series", price: 33850, electric: false },
-    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    { make: "Mercedes", model: "EQA", price: 48890, electric: true },
-    { make: "Fiat", model: "500", price: 15774, electric: false },
-    { make: "Nissan", model: "Juke", price: 20675, electric: false },
-    { make: "Ford", model: "F-Series", price: 33850, electric: false },
-    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    { make: "Mercedes", model: "EQA", price: 48890, electric: true },
-    { make: "Fiat", model: "500", price: 15774, electric: false },
-    { make: "Nissan", model: "Juke", price: 20675, electric: false },
-  ]);
-  const [columnDefs, setColumnDefs] = useState([
+  const columnDefs = useMemo(() => [
     {
-      headerName: "Make & Model",
-      valueGetter: (p) => p.data.make + " " + p.data.model,
+      headerName: "Category Name",
+      valueGetter: (p) => p.data.name,
       flex: 2,
     },
+
     {
-      field: "price",
-      valueFormatter: (p) => "£" + Math.floor(p.value).toLocaleString(),
-      flex: 1,
-    },
-    {
-      field: "price",
-      valueFormatter: (p) => "£" + Math.floor(p.value).toLocaleString(),
-      flex: 1,
-    },
-    {
-      field: "price",
-      valueFormatter: (p) => "£" + Math.floor(p.value).toLocaleString(),
-      flex: 1,
-    },
-    {
-      field: "price",
-      valueFormatter: (p) => "£" + Math.floor(p.value).toLocaleString(),
-      flex: 1,
-    },
-    {
-      field: "price",
-      valueFormatter: (p) => "£" + Math.floor(p.value).toLocaleString(),
+      field: "Createdz By",
+      valueFormatter: (p) => p.data.createdBy,
       flex: 1,
     },
     {
@@ -114,12 +107,16 @@ function Category() {
           </Button>
         )}
       </div>
-      {open ? (
-        <AddEditCategory setOpen={updateOpen} />
-      ) : (
+      {!loading && open && (
+        <AddEditCategory
+          setOpen={setOpen}
+          onCategoryAdded={handleCategoryAdded}
+        />
+      )}
+      {!loading && (
         <MyTable
           columnDefs={columnDefs}
-          data={data}
+          data={categories}
           editFn={handleEditCategory}
         />
       )}

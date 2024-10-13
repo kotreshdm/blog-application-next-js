@@ -59,7 +59,6 @@ export const authOptions = {
     },
 
     jwt: async ({ token, user }) => {
-      // console.log("callback jwt => ", token, user);
       const userByEmail = await User.findOne({ email: token.email });
       userByEmail.password = undefined;
       userByEmail.resetCode = undefined;
@@ -67,7 +66,7 @@ export const authOptions = {
       return token;
     },
     session: async ({ session, token }) => {
-      // console.log("callback session => ", session, user);
+      jwt: true;
       session.user = token.user;
       return session;
     },

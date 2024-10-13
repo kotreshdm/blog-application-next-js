@@ -56,12 +56,14 @@ export default function RootLayout({ children }) {
         <SessionProvider>
           <ThemeProvider theme={theme}>
             <Toaster
-              position='bottom-right'
               toastOptions={{
                 duration: 10000,
                 style: {
                   animation: "fade-out 0.6s, fade-in 0.6s",
                 },
+                position: "top-center",
+                dismissible: true,
+                closeButton: true,
               }}
             />
             <CssBaseline />

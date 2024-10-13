@@ -16,8 +16,7 @@ const CategorySchema = new mongoose.Schema(
       lowercase: true,
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
   },
@@ -26,7 +25,6 @@ const CategorySchema = new mongoose.Schema(
   }
 );
 
-// Pre-save hook to create slug from name
 CategorySchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
