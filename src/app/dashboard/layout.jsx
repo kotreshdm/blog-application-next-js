@@ -17,5 +17,5 @@ function ProtectedLayout({ children }) {
   );
 }
 
-export default ProtectedLayout;
-// export default withAuth(ProtectedLayout);
+// export default ProtectedLayout;
+export default withAuth(ProtectedLayout);

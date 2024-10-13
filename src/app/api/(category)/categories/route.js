@@ -4,6 +4,11 @@ import Category from "@/models/category";
 import { getServerSession } from "next-auth/next";
 
 export async function GET(req) {
+  const session = await getServerSession({ req });
+
+  if (!session) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
   await dbConnect();
   try {
     const categories = await Category.find({}).sort({ createdAt: -1 });
