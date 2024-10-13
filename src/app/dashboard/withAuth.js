@@ -9,8 +9,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
-const withAuth = (Component) => {
-  return (props) => {
+const withAuth = (WrappedComponent) => {
+  const AuthComponent = (props) => {
     const { data: session, status } = useSession();
 
     if (status === "loading") {
@@ -68,8 +68,17 @@ const withAuth = (Component) => {
       );
     }
 
-    return <Component {...props} />;
+    return <WrappedComponent {...props} />;
   };
+
+  AuthComponent.displayName = `withAuth(${getDisplayName(WrappedComponent)})`;
+
+  return AuthComponent;
 };
+
+// Helper function to get the display name of a component
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || "Component";
+}
 
 export default withAuth;

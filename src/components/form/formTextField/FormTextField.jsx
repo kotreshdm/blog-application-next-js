@@ -29,4 +29,6 @@ const FormTextField = React.memo(
   }
 );
 
+FormTextField.displayName = "FormTextField";
+
 export default FormTextField;

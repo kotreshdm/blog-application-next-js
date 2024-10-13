@@ -102,7 +102,7 @@ function Category() {
     );
   }, []);
 
-  const columnDefs = useMemo(() => [
+  const columnDefs = [
     {
       headerName: "Category Name",
       valueGetter: (p) => p.data.name,
@@ -120,7 +120,7 @@ function Category() {
       cellRenderer: ButtonCellRenderer,
       flex: 1,
     },
-  ]);
+  ];
 
   return (
     <div>
