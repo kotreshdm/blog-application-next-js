@@ -7,11 +7,51 @@ export async function GET(req) {
   await dbConnect();
   try {
     const categories = await Category.find({}).sort({ createdAt: -1 });
-    console.log(categories);
     return NextResponse.json({
       success: true,
       count: categories.length,
       categories: categories,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
+  }
+}
+export async function DELETE(req) {
+  const session = await getServerSession({ req });
+
+  if (!session) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  await dbConnect();
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "Category ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const deletedCategory = await Category.findByIdAndDelete(id);
+
+    if (!deletedCategory) {
+      return NextResponse.json(
+        { success: false, message: "Category not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Category deleted successfully",
+      category: deletedCategory,
     });
   } catch (error) {
     return NextResponse.json(
