@@ -15,9 +15,15 @@ const CategorySchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    description: {
+      type: String,
+    },
     createdBy: {
       type: String,
       required: true,
+    },
+    updatedBy: {
+      type: String,
     },
   },
   {

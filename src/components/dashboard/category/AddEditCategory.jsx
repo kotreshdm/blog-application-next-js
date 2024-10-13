@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   TextField,
   Button,
@@ -8,16 +8,35 @@ import {
   Typography,
   Stack,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
-const AddEditCategory = ({ setOpen, onCategoryAdded }) => {
-  const [categoryName, setCategoryName] = useState("");
+const AddEditCategory = ({
+  category,
+  setOpen,
+  onCategoryAdded,
+  onCategoryEdited,
+}) => {
+  const { data: session } = useSession();
+
+  const [categoryName, setCategoryName] = useState(category.name || "");
+  const [description, setDescription] = useState(category.description || "");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleCategoryNameChange = useCallback((e) => {
+    setCategoryName(e.target.value);
+  }, []);
+
+  const handleDescriptionChange = useCallback((e) => {
+    setDescription(e.target.value);
+  }, []);
+
+  const handleSubmitAdd = async (e) => {
+    alert("add");
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -25,62 +44,97 @@ const AddEditCategory = ({ setOpen, onCategoryAdded }) => {
     try {
       const response = await apiService.post("/categories", {
         name: categoryName,
+        description: description,
+        createdBy: session.user._id,
       });
 
       toast.success(`${response.data.category.name} created successfully!`);
 
-      // Call the onCategoryAdded callback to update the parent component
       if (onCategoryAdded) {
         onCategoryAdded(response.data.category);
       }
-
-      // Close the modal or dialog
       setOpen(false);
     } catch (error) {
-      console.error("Error creating category:", error);
-      setError("Failed to create category. Please try again.");
-      toast.error(error.message);
+      console.error("Error saving category:", error);
+      setError(error.message || "Failed to save category. Please try again.");
+      toast.error(error.message || "Failed to save category");
     } finally {
       setIsLoading(false);
     }
   };
+  const handleSubmitEdit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
+    try {
+      const response = await apiService.put(`/categories?id=${category._id}`, {
+        name: categoryName,
+        description: description,
+        updatedBy: session.user._id,
+      });
+
+      toast.success(`${response.data.category.name} updated successfully!`);
+
+      // Call the onCategoryAdded callback to update the parent component
+      if (onCategoryEdited) {
+        onCategoryEdited(response.data.category);
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error("Error saving category:", error);
+      setError(error.message || "Failed to save category. Please try again.");
+      toast.error(error.message || "Failed to save category");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleCancel = () => {
     setOpen(false);
   };
 
   return (
-    <Box component='form' onSubmit={handleSubmit} sx={{ mt: 2 }}>
+    <Box
+      component='form'
+      onSubmit={category._id ? handleSubmitEdit : handleSubmitAdd}
+      sx={{ mt: 2 }}
+    >
       <Typography variant='h6' gutterBottom>
-        Add New Category
+        {category._id ? "Edit Category" : "Add New Category"}
       </Typography>
-      <TextField
-        fullWidth
-        label='Category Name'
-        value={categoryName}
-        onChange={(e) => setCategoryName(e.target.value)}
-        margin='normal'
-        required
-        error={!!error}
-        helperText={error}
-      />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label='Category Name'
+            value={categoryName}
+            onChange={handleCategoryNameChange}
+            margin='normal'
+            required
+            error={!!error}
+            helperText={error}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label='Description'
+            value={description}
+            onChange={handleDescriptionChange}
+            margin='normal'
+          />
+        </Grid>
+      </Grid>
       <Stack direction='row' spacing={2} sx={{ mt: 2 }}>
         <Button
           type='submit'
           variant='contained'
           color='primary'
           disabled={isLoading}
-          sx={{ textTransform: "capitalize" }}
         >
-          {isLoading ? <CircularProgress size={24} /> : "Create Category"}
+          {isLoading ? <CircularProgress size={24} /> : "Submit"}
         </Button>
-        <Button
-          variant='outlined'
-          color='secondary'
-          onClick={handleCancel}
-          disabled={isLoading}
-          sx={{ textTransform: "capitalize" }}
-        >
+        <Button onClick={handleCancel} variant='outlined' color='secondary'>
           Cancel
         </Button>
       </Stack>

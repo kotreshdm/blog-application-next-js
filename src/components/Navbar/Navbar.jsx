@@ -35,6 +35,7 @@ const moonBounce = keyframes`
 
 export default function Navbar({ darkMode, toggleDarkMode }) {
   const { data: session, status, loading } = useSession();
+
   return (
     <AppBar position='sticky'>
       <Toolbar>

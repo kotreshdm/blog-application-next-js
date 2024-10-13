@@ -11,12 +11,13 @@ import {
   Stack,
 } from "@mui/material";
 import MyTable from "@/components/dashboard/AgGridTable";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddEditCategory from "@/components/dashboard/category/AddEditCategory";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
+import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 
 function Category() {
   const [open, setOpen] = useState(false);
@@ -39,16 +40,21 @@ function Category() {
         setLoading(false);
       }
     };
-
     fetchCategories();
   }, []);
 
   const handleCategoryAdded = (newCategory) => {
     setCategories((prevCategories) => [newCategory, ...prevCategories]);
   };
+  const handleCategoryEdited = (newCategory) => {
+    setCategories((prevCategories) =>
+      prevCategories.map((category) =>
+        category._id === newCategory._id ? newCategory : category
+      )
+    );
+    setCategory({});
+  };
   const handleConfirmDelete = () => {
-    console.log("Confirm delete clicked");
-    console.log("Deleting category:", category);
     const deleteCategory = async () => {
       try {
         const response = await apiService.delete(
@@ -74,22 +80,18 @@ function Category() {
 
   const handleAddCategory = () => {
     setOpen(true);
-  };
-  const handleEditCategory = () => {
-    console.log("Edit clicked");
+    setCategory({});
   };
 
   const ButtonCellRenderer = useCallback((params) => {
     const handleEdit = () => {
-      console.log("Edit clicked for:", params.data);
+      setOpen(true);
+      setCategory(params.data);
     };
-
     const handleDelete = () => {
-      console.log("Delete clicked for:", params.data);
       setOpenDeleteConfirmation(true);
       setCategory(params.data);
     };
-
     return (
       <Stack direction='row' spacing={1}>
         <IconButton onClick={handleEdit} size='small' color='primary'>
@@ -106,12 +108,22 @@ function Category() {
     {
       headerName: "Category Name",
       valueGetter: (p) => p.data.name,
-      flex: 2,
+      flex: 1,
     },
 
     {
-      field: "Createdz By",
+      field: "Created By",
       valueFormatter: (p) => p.data.createdBy,
+      flex: 1,
+    },
+    {
+      field: "Updated By",
+      valueFormatter: (p) => p.data.updatedBy,
+      flex: 1,
+    },
+    {
+      field: "Category Description",
+      valueFormatter: (p) => p.data.description,
       flex: 1,
     },
     {
@@ -140,22 +152,22 @@ function Category() {
             onClick={handleAddCategory}
             sx={{ textTransform: "capitalize" }}
           >
-            Add Category
+            {category._id ? "Edit Category" : "Add Category"}
           </Button>
         )}
       </div>
       {!loading && open && (
         <AddEditCategory
+          category={category}
           setOpen={setOpen}
           onCategoryAdded={handleCategoryAdded}
+          onCategoryEdited={handleCategoryEdited}
         />
       )}
-      {!loading && (
-        <MyTable
-          columnDefs={columnDefs}
-          data={categories}
-          editFn={handleEditCategory}
-        />
+      {loading ? (
+        <CenteredLoading />
+      ) : (
+        <MyTable columnDefs={columnDefs} data={categories} />
       )}
       <Dialog
         open={openDeleteConfirmation}
