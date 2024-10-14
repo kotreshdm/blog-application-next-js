@@ -140,4 +140,7 @@ const AddEditCategory = React.memo(
   }
 );
 
+// Add this line to set the display name
+AddEditCategory.displayName = "AddEditCategory";
+
 export default AddEditCategory;
