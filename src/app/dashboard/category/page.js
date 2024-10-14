@@ -27,21 +27,22 @@ function Category() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await apiService.get("/categories", {});
-        if (!response.status === 200) {
-          throw new Error("Failed to fetch categories");
-        }
-        setCategories(response.data.categories);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await apiService.get("/categories", {});
+      if (!response.status === 200) {
+        throw new Error("Failed to fetch categories");
+      }
+      setCategories(response.data.categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCategoryAdded = (newCategory) => {
     setCategories((prevCategories) => [newCategory, ...prevCategories]);
