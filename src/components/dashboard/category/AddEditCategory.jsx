@@ -23,8 +23,8 @@ const AddEditCategory = React.memo(
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     useEffect(() => {
-      setCategoryName(category.name);
-      setDescription(category.description);
+      setCategoryName(category?.name || "");
+      setDescription(category?.description || "");
     }, [category]);
     const handleCategoryNameChange = useCallback((e) => {
       setCategoryName(e.target.value);
