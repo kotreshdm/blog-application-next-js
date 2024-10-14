@@ -25,6 +25,10 @@ const CategorySchema = new mongoose.Schema(
     updatedBy: {
       type: String,
     },
+    image: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

@@ -9,10 +9,10 @@ export const authOptions = {
     strategy: "jwt",
   },
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    // }),
     CredentialsProvider({
       async authorize(credentials, req) {
         dbConnect();
@@ -74,5 +74,20 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
+    signOut: "/logout",
+    error: "/login",
+    newUser: "/dashboard/category",
+    verifyRequest: "/login",
+    newSession: "/login",
+    magicLink: "/login",
+    callback: "/login",
+    notFound: "/login",
+    accessDenied: "/login",
+    expired: "/login",
+    newSession: "/login",
+    session: {
+      strategy: "jwt",
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
   },
 };
