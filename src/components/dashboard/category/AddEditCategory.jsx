@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -18,11 +18,14 @@ const AddEditCategory = React.memo(
   ({ category, handleCancel, onCategoryAdded, onCategoryEdited }) => {
     const { data: session } = useSession();
 
-    const [categoryName, setCategoryName] = useState(category.name || "");
-    const [description, setDescription] = useState(category.description || "");
+    const [categoryName, setCategoryName] = useState("");
+    const [description, setDescription] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
-
+    useEffect(() => {
+      setCategoryName(category.name);
+      setDescription(category.description);
+    }, [category]);
     const handleCategoryNameChange = useCallback((e) => {
       setCategoryName(e.target.value);
     }, []);
