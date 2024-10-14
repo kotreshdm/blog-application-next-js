@@ -83,6 +83,11 @@ function Category() {
     setCategory({});
   };
 
+  const handleCancel = useCallback(() => {
+    setOpen(false);
+    setCategory({});
+  }, []);
+
   const ButtonCellRenderer = useCallback((params) => {
     const handleEdit = () => {
       setOpen(true);
@@ -159,7 +164,7 @@ function Category() {
       {!loading && open && (
         <AddEditCategory
           category={category}
-          setOpen={setOpen}
+          handleCancel={handleCancel}
           onCategoryAdded={handleCategoryAdded}
           onCategoryEdited={handleCategoryEdited}
         />

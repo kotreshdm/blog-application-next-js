@@ -54,7 +54,7 @@ const withAuth = (WrappedComponent) => {
               Please log in to access this page.
             </Typography>
             <Link
-              href={`/api/auth/signin?callbackUrl=${encodeURIComponent(
+              href={`/login?callbackUrl=${encodeURIComponent(
                 window.location.href
               )}`}
               passHref

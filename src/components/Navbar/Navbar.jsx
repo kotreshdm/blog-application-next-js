@@ -7,14 +7,13 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import LightModeIcon from "@mui/icons-material/LightMode"; // Sun icon for light mode
-import DarkModeIcon from "@mui/icons-material/DarkMode"; // Moon icon for dark mode
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { keyframes } from "@mui/system";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { toTitleCase } from "@/utils/helperFunctions/toTitleCase";
 
-// Define animations
 const sunRotate = keyframes`
   from {
     transform: rotate(0deg);
