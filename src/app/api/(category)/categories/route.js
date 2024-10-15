@@ -3,15 +3,6 @@ import dbConnect from "@/utils/dbConnect";
 import Category from "@/models/category";
 import { getServerSession } from "next-auth/next";
 
-import formidable from "formidable";
-import fs from "fs";
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function GET(req) {
   const session = await getServerSession({ req });
 
