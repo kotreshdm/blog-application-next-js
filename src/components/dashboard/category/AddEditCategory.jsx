@@ -25,15 +25,27 @@ const AddEditCategory = React.memo(
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [imageBase64, setImageBase64] = useState("");
 
     useEffect(() => {
       if (category) {
         setName(category.name || "");
         setDescription(category.description || "");
-        setImagePreview(category.image || "");
+        if (category.image) {
+          setImageBase64(Buffer.from(category.image).toString("base64"));
+          setImagePreview(
+            `data:image/jpeg;base64,${Buffer.from(category.image).toString(
+              "base64"
+            )}`
+          );
+        } else {
+          setImageBase64("");
+          setImagePreview("");
+        }
       } else {
         setName("");
         setDescription("");
+        setImageBase64("");
         setImagePreview("");
       }
     }, [category]);
@@ -41,26 +53,53 @@ const AddEditCategory = React.memo(
     const handleImageChange = (e) => {
       const file = e.target.files[0];
       if (file) {
-        setImage(file);
-        setImagePreview(URL.createObjectURL(file));
+        const img = new Image();
+        img.onload = () => {
+          if (img.width === 300 && img.height === 200) {
+            setImage(file);
+            setImagePreview(URL.createObjectURL(file));
+          } else {
+            toast.error("Image dimensions must be 300x200 pixels.");
+            e.target.value = null; // Reset the file input
+          }
+        };
+        img.onerror = () => {
+          toast.error("Failed to load the image. Please try again.");
+          e.target.value = null; // Reset the file input
+        };
+        img.src = URL.createObjectURL(file);
       }
     };
 
     const handleSubmit = async (e) => {
       e.preventDefault();
+
       setIsLoading(true);
       try {
         const apiEndpoint = category?._id
           ? `/categories?id=${category._id}`
           : "/categories";
         const method = category?._id ? "put" : "post";
-        const data = { name, description, createdBy: session.user._id };
 
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("description", description);
+        formData.append("createdBy", session.user._id);
         if (image) {
-          data.image = image;
+          formData.append("image", image);
         }
 
-        const response = await apiService[method](apiEndpoint, data);
+        const config = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+
+        const response = await apiService[method](
+          apiEndpoint,
+          formData,
+          config
+        );
 
         toast.success(
           `${response.data.category.name} ${
@@ -108,22 +147,13 @@ const AddEditCategory = React.memo(
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            {/* <input
+            <input
               accept='image/*'
               style={{ display: "none" }}
               id='raised-button-file'
               type='file'
               onChange={handleImageChange}
             />
-            <label htmlFor='raised-button-file'>
-              <Button
-                variant='contained'
-                component='span'
-                sx={{ mt: 2, mb: 2 }}
-              >
-                Upload Image
-              </Button>
-            </label>
             {imagePreview && (
               <Box mt={2}>
                 <img
@@ -132,16 +162,43 @@ const AddEditCategory = React.memo(
                   style={{ maxWidth: "100%", maxHeight: "200px" }}
                 />
               </Box>
-            )} */}
+            )}
+            <Box sx={{ mt: 2, mb: 2, display: "flex", gap: 2 }}>
+              <label htmlFor='raised-button-file'>
+                <Button
+                  variant='contained'
+                  component='span'
+                  sx={{ textTransform: "capitalize" }}
+                >
+                  {imagePreview ? "Change Image" : "Upload Image"}
+                </Button>
+              </label>
+              {imagePreview && (
+                <Button
+                  sx={{ textTransform: "capitalize" }}
+                  variant='outlined'
+                  color='secondary'
+                  onClick={() => {
+                    setImagePreview(null);
+                    setImage(null);
+                  }}
+                >
+                  Remove Image
+                </Button>
+              )}
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button sx={{ textTransform: "capitalize" }} onClick={onClose}>
+            Cancel
+          </Button>
           <Button
             onClick={handleSubmit}
             variant='contained'
             color='primary'
             disabled={isLoading}
+            sx={{ textTransform: "capitalize" }}
           >
             {isLoading ? "Loading..." : "Submit"}
           </Button>

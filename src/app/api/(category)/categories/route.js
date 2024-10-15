@@ -3,6 +3,15 @@ import dbConnect from "@/utils/dbConnect";
 import Category from "@/models/category";
 import { getServerSession } from "next-auth/next";
 
+import formidable from "formidable";
+import fs from "fs";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export async function GET(req) {
   const session = await getServerSession({ req });
 
@@ -31,9 +40,21 @@ export async function POST(req) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
   await dbConnect();
-  const { name, description, createdBy } = await req.json();
 
   try {
+    const formData = await req.formData();
+    const name = formData.get("name");
+    const description = formData.get("description");
+    const createdBy = formData.get("createdBy");
+    const image = formData.get("image");
+
+    if (!name) {
+      return NextResponse.json(
+        { success: false, message: "Name is required" },
+        { status: 400 }
+      );
+    }
+
     // Check if category already exists
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
@@ -43,10 +64,17 @@ export async function POST(req) {
       );
     }
 
+    let imageBuffer = null;
+    if (image && image instanceof Blob) {
+      const arrayBuffer = await image.arrayBuffer();
+      imageBuffer = Buffer.from(arrayBuffer);
+    }
+
     const newCategory = await Category.create({
       name,
       description,
       createdBy,
+      image: imageBuffer,
     });
 
     return NextResponse.json({
@@ -55,6 +83,7 @@ export async function POST(req) {
       category: newCategory,
     });
   } catch (error) {
+    console.error("Error creating category:", error);
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 400 }
@@ -63,41 +92,54 @@ export async function POST(req) {
 }
 export async function PUT(req) {
   const session = await getServerSession({ req });
-
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
   await dbConnect();
-
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-  const { name, description, updatedBy } = await req.json();
-
-  if (!name || name.trim() === "") {
-    return NextResponse.json(
-      { success: false, message: "Category name is required" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const formData = await req.formData();
+    const name = formData.get("name");
+    const description = formData.get("description");
+    const updatedBy = formData.get("updatedBy");
+    const image = formData.get("image");
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!name) {
+      return NextResponse.json(
+        { success: false, message: "Name is required" },
+        { status: 400 }
+      );
+    }
+
     const existingCategory = await Category.findOne({ name, _id: { $ne: id } });
     if (existingCategory) {
       return NextResponse.json(
-        { success: false, message: "Category name already exists" },
+        { success: false, message: "Category already exists" },
         { status: 409 }
       );
     }
 
-    // Get the user ID from the session
-    const userId = session.user.id;
+    let imageBuffer = null;
+    if (image && image instanceof Blob) {
+      const arrayBuffer = await image.arrayBuffer();
+      imageBuffer = Buffer.from(arrayBuffer);
+    }
 
-    const updatedCategory = await Category.findByIdAndUpdate(
-      id,
-      { name, description, updatedBy },
-      { new: true, runValidators: true }
-    );
+    const updateData = {
+      name,
+      description,
+      updatedBy,
+    };
+
+    updateData.image = imageBuffer;
+
+    const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedCategory) {
       return NextResponse.json(
@@ -113,10 +155,9 @@ export async function PUT(req) {
     });
   } catch (error) {
     console.error("Error updating category:", error);
-    const status = error.name === "ValidationError" ? 400 : 500;
     return NextResponse.json(
       { success: false, message: error.message },
-      { status }
+      { status: 400 }
     );
   }
 }

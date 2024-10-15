@@ -125,6 +125,25 @@ function Category() {
       flex: 1,
     },
     {
+      field: "Image",
+      cellRenderer: (params) => {
+        const value = params.data.image;
+        if (value) {
+          return (
+            <img
+              src={`data:image/jpeg;base64,${Buffer.from(value).toString(
+                "base64"
+              )}`}
+              alt='Category'
+              style={{ width: "auto", height: "50px", objectFit: "cover" }}
+            />
+          );
+        }
+        return "No Image";
+      },
+      flex: 1,
+    },
+    {
       headerName: "Actions",
       field: "actions",
       cellRenderer: ButtonCellRenderer,
@@ -142,7 +161,7 @@ function Category() {
         }}
       >
         <h1>Category</h1> {open}
-        {!open && (
+        {!open && !openDeleteConfirmation && (
           <Button
             variant='contained'
             color='primary'
@@ -183,7 +202,10 @@ function Category() {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setOpenDeleteConfirmation(false)}
+            onClick={() => {
+              setOpenDeleteConfirmation(false);
+              setCategory({});
+            }}
             color='primary'
           >
             Cancel
