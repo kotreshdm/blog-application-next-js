@@ -20,16 +20,34 @@ import toast from "react-hot-toast";
 import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 
 function Category() {
+  const [category, setCategory] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState({});
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     fetchCategories();
   }, []);
-
+  const ButtonCellRenderer = useCallback((params) => {
+    const handleDelete = () => {
+      setOpenDeleteConfirmation(true);
+      setCategory(params.data);
+    };
+    const handleEdit = () => {
+      setOpen(true);
+      setCategory(params.data);
+    };
+    return (
+      <Stack direction='row' spacing={1}>
+        <IconButton onClick={handleEdit} size='small' color='primary'>
+          <EditIcon />
+        </IconButton>
+        <IconButton onClick={handleDelete} size='small' color='error'>
+          <DeleteIcon />
+        </IconButton>
+      </Stack>
+    );
+  }, []);
   const fetchCategories = async () => {
     try {
       const response = await apiService.get("/categories", {});
@@ -44,6 +62,14 @@ function Category() {
     }
   };
 
+  const handleAddCategory = () => {
+    setOpen(true);
+    setCategory({});
+  };
+  const handleCancel = useCallback(() => {
+    setOpen(false);
+    setCategory({});
+  }, []);
   const handleCategoryAdded = (newCategory) => {
     setCategories((prevCategories) => [newCategory, ...prevCategories]);
   };
@@ -55,60 +81,26 @@ function Category() {
     );
     setCategory({});
   };
-  const handleConfirmDelete = () => {
-    const deleteCategory = async () => {
-      try {
-        const response = await apiService.delete(
-          `/categories?id=${category._id}`
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await apiService.delete(
+        `/categories?id=${category._id}`
+      );
+      if (response.data.success) {
+        setCategories((prevCategories) =>
+          prevCategories.filter((cat) => cat._id !== category._id)
         );
-        if (response.data.success) {
-          setCategories((prevCategories) =>
-            prevCategories.filter((cat) => cat._id !== category._id)
-          );
-          setOpenDeleteConfirmation(false);
-          toast.success(`${category.name} deleted successfully`);
-        } else {
-          throw new Error(response.message || "Failed to delete category");
-        }
-      } catch (error) {
-        console.error("Error deleting category:", error);
-        toast.error(error.message || "Failed to delete category");
+        setOpenDeleteConfirmation(false);
+        setCategory({});
+        toast.success(`${category.name} deleted successfully`);
+      } else {
+        throw new Error(response.message || "Failed to delete category");
       }
-    };
-
-    deleteCategory();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error(error.message || "Failed to delete category");
+    }
   };
-
-  const handleAddCategory = () => {
-    setOpen(true);
-    setCategory({});
-  };
-
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-    setCategory({});
-  }, []);
-
-  const ButtonCellRenderer = useCallback((params) => {
-    const handleEdit = () => {
-      setOpen(true);
-      setCategory(params.data);
-    };
-    const handleDelete = () => {
-      setOpenDeleteConfirmation(true);
-      setCategory(params.data);
-    };
-    return (
-      <Stack direction='row' spacing={1}>
-        <IconButton onClick={handleEdit} size='small' color='primary'>
-          <EditIcon />
-        </IconButton>
-        <IconButton onClick={handleDelete} size='small' color='error'>
-          <DeleteIcon />
-        </IconButton>
-      </Stack>
-    );
-  }, []);
 
   const columnDefs = [
     {
@@ -139,7 +131,6 @@ function Category() {
       flex: 1,
     },
   ];
-
   return (
     <div>
       <div
@@ -164,8 +155,9 @@ function Category() {
       </div>
       {!loading && open && (
         <AddEditCategory
+          isOpen={open}
           category={category}
-          handleCancel={handleCancel}
+          onClose={handleCancel}
           onCategoryAdded={handleCategoryAdded}
           onCategoryEdited={handleCategoryEdited}
         />

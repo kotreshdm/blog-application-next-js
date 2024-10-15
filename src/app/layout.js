@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
           <ThemeProvider theme={theme}>
             <Toaster
               toastOptions={{
-                duration: 10000,
+                duration: 5000,
                 style: {
                   animation: "fade-out 0.6s, fade-in 0.6s",
                 },

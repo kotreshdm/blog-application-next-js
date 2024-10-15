@@ -26,8 +26,8 @@ const CategorySchema = new mongoose.Schema(
       type: String,
     },
     image: {
-      type: String,
-      default: "",
+      type: Buffer,
+      contentType: String,
     },
   },
   {

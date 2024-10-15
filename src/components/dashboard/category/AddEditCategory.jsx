@@ -1,146 +1,156 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   TextField,
   Button,
   Box,
-  Typography,
-  Stack,
-  CircularProgress,
-  Grid,
+  IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import FormTextField from "@/components/form/formTextField/FormTextField";
 
 const AddEditCategory = React.memo(
-  ({ category, handleCancel, onCategoryAdded, onCategoryEdited }) => {
+  ({ isOpen, onClose, onCategoryAdded, onCategoryEdited, category }) => {
     const { data: session } = useSession();
-
-    const [categoryName, setCategoryName] = useState("");
+    const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+
     useEffect(() => {
-      setCategoryName(category?.name || "");
-      setDescription(category?.description || "");
+      if (category) {
+        setName(category.name || "");
+        setDescription(category.description || "");
+        setImagePreview(category.image || "");
+      } else {
+        setName("");
+        setDescription("");
+        setImagePreview("");
+      }
     }, [category]);
-    const handleCategoryNameChange = useCallback((e) => {
-      setCategoryName(e.target.value);
-    }, []);
 
-    const handleDescriptionChange = useCallback((e) => {
-      setDescription(e.target.value);
-    }, []);
-
-    const handleSubmitAdd = async (e) => {
-      e.preventDefault();
-      setIsLoading(true);
-      setError("");
-
-      try {
-        const response = await apiService.post("/categories", {
-          name: categoryName,
-          description: description,
-          createdBy: session.user._id,
-        });
-
-        toast.success(`${response.data.category.name} created successfully!`);
-
-        if (onCategoryAdded) {
-          onCategoryAdded(response.data.category);
-        }
-        handleCancel();
-      } catch (error) {
-        console.error("Error saving category:", error);
-        setError(error.message || "Failed to save category. Please try again.");
-        toast.error(error.message || "Failed to save category");
-      } finally {
-        setIsLoading(false);
+    const handleImageChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        setImage(file);
+        setImagePreview(URL.createObjectURL(file));
       }
     };
-    const handleSubmitEdit = async (e) => {
+
+    const handleSubmit = async (e) => {
       e.preventDefault();
       setIsLoading(true);
-      setError("");
-
       try {
-        const response = await apiService.put(
-          `/categories?id=${category._id}`,
-          {
-            name: categoryName,
-            description: description,
-            updatedBy: session.user._id,
-          }
-        );
+        const apiEndpoint = category?._id
+          ? `/categories?id=${category._id}`
+          : "/categories";
+        const method = category?._id ? "put" : "post";
+        const data = { name, description, createdBy: session.user._id };
 
-        toast.success(`${response.data.category.name} updated successfully!`);
-
-        if (onCategoryEdited) {
-          onCategoryEdited(response.data.category);
+        if (image) {
+          data.image = image;
         }
-        handleCancel();
+
+        const response = await apiService[method](apiEndpoint, data);
+
+        toast.success(
+          `${response.data.category.name} ${
+            category ? "updated" : "created"
+          } successfully!`
+        );
+        category._id
+          ? onCategoryEdited?.(response.data.category)
+          : onCategoryAdded?.(response.data.category);
+        onClose();
       } catch (error) {
-        console.error("Error saving category:", error);
-        setError(error.message || "Failed to save category. Please try again.");
-        toast.error(error.message || "Failed to save category");
+        toast.error("Failed to save category");
       } finally {
         setIsLoading(false);
       }
     };
 
     return (
-      <Box
-        component='form'
-        onSubmit={category._id ? handleSubmitEdit : handleSubmitAdd}
-        sx={{ mt: 2 }}
-      >
-        <Typography variant='h6' gutterBottom>
-          {category._id ? "Edit Category" : "Add New Category"}
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Category Name'
-              value={categoryName}
-              onChange={handleCategoryNameChange}
-              margin='normal'
+      <Dialog open={isOpen} onClose={onClose} maxWidth='sm' fullWidth>
+        <DialogTitle>
+          {category ? "Edit Category" : "Add Category"}
+          <IconButton
+            aria-label='close'
+            onClick={onClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Box component='form' noValidate sx={{ mt: 1 }}>
+            <FormTextField
               required
-              error={!!error}
-              helperText={error}
+              label='Category Name'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Description'
+            <FormTextField
+              label='Category Description'
               value={description}
-              onChange={handleDescriptionChange}
-              margin='normal'
+              onChange={(e) => setDescription(e.target.value)}
             />
-          </Grid>
-        </Grid>
-        <Stack direction='row' spacing={2} sx={{ mt: 2 }}>
+            {/* <input
+              accept='image/*'
+              style={{ display: "none" }}
+              id='raised-button-file'
+              type='file'
+              onChange={handleImageChange}
+            />
+            <label htmlFor='raised-button-file'>
+              <Button
+                variant='contained'
+                component='span'
+                sx={{ mt: 2, mb: 2 }}
+              >
+                Upload Image
+              </Button>
+            </label>
+            {imagePreview && (
+              <Box mt={2}>
+                <img
+                  src={imagePreview}
+                  alt='Preview'
+                  style={{ maxWidth: "100%", maxHeight: "200px" }}
+                />
+              </Box>
+            )} */}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
           <Button
-            type='submit'
+            onClick={handleSubmit}
             variant='contained'
             color='primary'
             disabled={isLoading}
           >
-            {isLoading ? <CircularProgress size={24} /> : "Submit"}
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
-          <Button onClick={handleCancel} variant='outlined' color='secondary'>
-            Cancel
-          </Button>
-        </Stack>
-      </Box>
+        </DialogActions>
+      </Dialog>
     );
   }
 );
 
-// Add this line to set the display name
 AddEditCategory.displayName = "AddEditCategory";
 
 export default AddEditCategory;
