@@ -127,10 +127,10 @@ export async function PUT(req) {
     };
 
     if (imageBuffer) {
-    } else if (removeImage === "true") {
+      updateData.image = imageBuffer;
+    } else if (removeImage === "true" || removeImage === true) {
       updateData.image = null;
     }
-    console.log("updateData", updateData);
 
     const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
       new: true,

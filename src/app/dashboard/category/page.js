@@ -28,7 +28,7 @@ function Category() {
   const { allCategories } = useSelector(categoryDetails);
   const dispatch = useDispatch();
   const [category, setCategory] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   useEffect(() => {
