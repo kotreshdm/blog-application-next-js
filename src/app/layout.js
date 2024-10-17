@@ -6,6 +6,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Navbar from "../components/Navbar/Navbar";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
+import ReactReduxProvider from "@/utils/ReactReduxProvider";
+
 function getInitialDarkMode() {
   if (typeof window !== "undefined") {
     const savedMode = localStorage.getItem("theme");
@@ -53,24 +55,26 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en'>
       <body>
-        <SessionProvider>
-          <ThemeProvider theme={theme}>
-            <Toaster
-              toastOptions={{
-                duration: 5000,
-                style: {
-                  animation: "fade-out 0.6s, fade-in 0.6s",
-                },
-                position: "top-center",
-                dismissible: true,
-                closeButton: true,
-              }}
-            />
-            <CssBaseline />
-            <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+        <ReactReduxProvider>
+          <SessionProvider>
+            <ThemeProvider theme={theme}>
+              <Toaster
+                toastOptions={{
+                  duration: 5000,
+                  style: {
+                    animation: "fade-out 0.6s, fade-in 0.6s",
+                  },
+                  position: "top-center",
+                  dismissible: true,
+                  closeButton: true,
+                }}
+              />
+              <CssBaseline />
+              <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              {children}
+            </ThemeProvider>
+          </SessionProvider>
+        </ReactReduxProvider>
       </body>
     </html>
   );

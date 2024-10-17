@@ -61,7 +61,18 @@ export default function Register() {
         <Typography component='h1' variant='h5'>
           Register
         </Typography>
-        <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box
+          component='form'
+          onSubmit={handleSubmit}
+          noValidate
+          sx={{
+            mt: 1,
+            width: "100%", // Ensure full width within the container
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center", // Center the form fields
+          }}
+        >
           <FormTextField
             name='name'
             label='Full Name'
@@ -69,6 +80,7 @@ export default function Register() {
             onChange={handleNameChange}
             autoComplete='name'
             autoFocus
+            sx={{ width: "100%", maxWidth: "300px" }} // Set a max-width for the input fields
           />
           <FormTextField
             name='email'
@@ -76,6 +88,7 @@ export default function Register() {
             value={email}
             onChange={handleEmailChange}
             autoComplete='email'
+            sx={{ width: "100%", maxWidth: "300px" }}
           />
           <FormTextField
             name='password'
@@ -84,12 +97,12 @@ export default function Register() {
             value={password}
             onChange={handlePasswordChange}
             autoComplete='new-password'
+            sx={{ width: "100%", maxWidth: "300px" }}
           />
           <Button
             type='submit'
-            fullWidth
             variant='contained'
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2, width: "80%", maxWidth: "250px" }} // Make button smaller
             disabled={loading}
           >
             {loading ? "Registering..." : "Register"}

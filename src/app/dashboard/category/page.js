@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -10,6 +11,7 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import MyTable from "@/components/dashboard/AgGridTable";
 import { useCallback, useEffect, useState } from "react";
 import AddEditCategory from "@/components/dashboard/category/AddEditCategory";
@@ -18,15 +20,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
 import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
+import { useDispatch, useSelector } from "react-redux";
+import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
+import { updateCategories } from "@/config/redux/categorySlice/categorySlice";
 
 function Category() {
+  const { allCategories } = useSelector(categoryDetails);
+  const dispatch = useDispatch();
   const [category, setCategory] = useState({});
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   useEffect(() => {
-    fetchCategories();
+    if (!allCategories.length) {
+      fetchCategories();
+    }
   }, []);
   const ButtonCellRenderer = useCallback((params) => {
     const handleDelete = () => {
@@ -49,12 +57,14 @@ function Category() {
     );
   }, []);
   const fetchCategories = async () => {
+    setLoading(true);
     try {
       const response = await apiService.get("/categories", {});
       if (!response.status === 200) {
         throw new Error("Failed to fetch categories");
       }
-      setCategories(response.data.categories);
+
+      dispatch(updateCategories(response.data.categories));
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
@@ -71,14 +81,13 @@ function Category() {
     setCategory({});
   }, []);
   const handleCategoryAdded = (newCategory) => {
-    setCategories((prevCategories) => [newCategory, ...prevCategories]);
+    dispatch(updateCategories([newCategory, ...allCategories]));
   };
   const handleCategoryEdited = (newCategory) => {
-    setCategories((prevCategories) =>
-      prevCategories.map((category) =>
-        category._id === newCategory._id ? newCategory : category
-      )
+    const updatedCategory = allCategories.map((category) =>
+      category._id === newCategory._id ? newCategory : category
     );
+    dispatch(updateCategories(updatedCategory));
     setCategory({});
   };
   const handleConfirmDelete = async () => {
@@ -87,8 +96,10 @@ function Category() {
         `/categories?id=${category._id}`
       );
       if (response.data.success) {
-        setCategories((prevCategories) =>
-          prevCategories.filter((cat) => cat._id !== category._id)
+        dispatch(
+          updateCategories(
+            allCategories.filter((cat) => cat._id !== category._id)
+          )
         );
         setOpenDeleteConfirmation(false);
         setCategory({});
@@ -160,17 +171,28 @@ function Category() {
           marginBottom: "1rem",
         }}
       >
-        <h1>Category</h1> {open}
-        {!open && !openDeleteConfirmation && (
+        <h1>Category</h1>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           <Button
-            variant='contained'
+            variant='outlined'
             color='primary'
-            onClick={handleAddCategory}
+            onClick={() => fetchCategories()}
             sx={{ textTransform: "capitalize" }}
+            startIcon={<RefreshIcon />}
           >
-            {category._id ? "Edit Category" : "Add Category"}
+            Refresh
           </Button>
-        )}
+          {!open && !openDeleteConfirmation && (
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={handleAddCategory}
+              sx={{ textTransform: "capitalize" }}
+            >
+              {category._id ? "Edit Category" : "Add Category"}
+            </Button>
+          )}
+        </Box>
       </div>
       {!loading && open && (
         <AddEditCategory
@@ -184,7 +206,7 @@ function Category() {
       {loading ? (
         <CenteredLoading />
       ) : (
-        <MyTable columnDefs={columnDefs} data={categories} />
+        <MyTable columnDefs={columnDefs} data={allCategories} />
       )}
       <Dialog
         open={openDeleteConfirmation}

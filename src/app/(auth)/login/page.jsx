@@ -77,17 +77,25 @@ export default function Login() {
           Login
         </Typography>
         <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          {emailField}
-          {passwordField}
-          <Button
-            type='submit'
-            fullWidth
-            variant='contained'
-            sx={{ mt: 3, mb: 2 }}
-            disabled={loading}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
           >
-            {loading ? "Logging in..." : "Login"}
-          </Button>
+            {emailField}
+            {passwordField}
+            <Button
+              type='submit'
+              variant='contained'
+              sx={{ mt: 3, mb: 2, width: "60%" }}
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Container>

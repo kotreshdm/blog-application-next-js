@@ -25,27 +25,23 @@ const AddEditCategory = React.memo(
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [imageBase64, setImageBase64] = useState("");
-
+    const [removeImage, setRemoveImage] = useState(false);
     useEffect(() => {
       if (category) {
         setName(category.name || "");
         setDescription(category.description || "");
         if (category.image) {
-          setImageBase64(Buffer.from(category.image).toString("base64"));
           setImagePreview(
             `data:image/jpeg;base64,${Buffer.from(category.image).toString(
               "base64"
             )}`
           );
         } else {
-          setImageBase64("");
           setImagePreview("");
         }
       } else {
         setName("");
         setDescription("");
-        setImageBase64("");
         setImagePreview("");
       }
     }, [category]);
@@ -60,31 +56,31 @@ const AddEditCategory = React.memo(
             setImagePreview(URL.createObjectURL(file));
           } else {
             toast.error("Image dimensions must be 300x200 pixels.");
-            e.target.value = null; // Reset the file input
+            e.target.value = null;
           }
         };
         img.onerror = () => {
           toast.error("Failed to load the image. Please try again.");
-          e.target.value = null; // Reset the file input
+          e.target.value = null;
         };
         img.src = URL.createObjectURL(file);
+        setRemoveImage(false);
       }
     };
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-
       setIsLoading(true);
       try {
         const apiEndpoint = category?._id
           ? `/categories?id=${category._id}`
           : "/categories";
         const method = category?._id ? "put" : "post";
-
         const formData = new FormData();
         formData.append("name", name);
         formData.append("description", description);
         formData.append("createdBy", session.user._id);
+        formData.append("removeImage", removeImage);
         if (image) {
           formData.append("image", image);
         }
@@ -181,6 +177,7 @@ const AddEditCategory = React.memo(
                   onClick={() => {
                     setImagePreview(null);
                     setImage(null);
+                    setRemoveImage(true);
                   }}
                 >
                   Remove Image

@@ -7,7 +7,6 @@ import Link from "next/link";
 
 export default function NotFound() {
   const router = useRouter();
-
   return (
     <Container maxWidth='sm'>
       <Box

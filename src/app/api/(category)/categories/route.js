@@ -92,8 +92,9 @@ export async function PUT(req) {
     const formData = await req.formData();
     const name = formData.get("name");
     const description = formData.get("description");
-    const updatedBy = formData.get("updatedBy");
+    const updatedBy = formData.get("createdBy");
     const image = formData.get("image");
+    const removeImage = formData.get("removeImage");
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
@@ -125,7 +126,11 @@ export async function PUT(req) {
       updatedBy,
     };
 
-    updateData.image = imageBuffer;
+    if (imageBuffer) {
+    } else if (removeImage === "true") {
+      updateData.image = null;
+    }
+    console.log("updateData", updateData);
 
     const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
       new: true,
