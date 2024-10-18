@@ -12,6 +12,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 const withAuth = (WrappedComponent) => {
   const AuthComponent = (props) => {
     const { data: session, status } = useSession();
+    console.log(session?.user.role);
 
     if (status === "loading") {
       return (
@@ -28,7 +29,7 @@ const withAuth = (WrappedComponent) => {
       );
     }
 
-    if (!session?.user) {
+    if (!session?.user?.role?.includes("admin")) {
       return (
         <Container maxWidth='sm'>
           <Box
@@ -51,16 +52,11 @@ const withAuth = (WrappedComponent) => {
               Access Denied
             </Typography>
             <Typography variant='body1' sx={{ mb: 2 }}>
-              Please log in to access this page.
+              You do not have permission to access this page.
             </Typography>
-            <Link
-              href={`/login?callbackUrl=${encodeURIComponent(
-                window.location.href
-              )}`}
-              passHref
-            >
+            <Link href='/' passHref>
               <Button variant='contained' color='primary'>
-                Login
+                Go to Home
               </Button>
             </Link>
           </Box>

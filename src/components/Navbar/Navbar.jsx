@@ -61,7 +61,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
                 marginRight: "15px",
               }}
             >
-              Welcome, {toTitleCase(session.user.name) || session.user.email}
+              {toTitleCase(session.user.name) || session.user.email} Dashboard
             </Link>
             <Button
               variant='outlined'

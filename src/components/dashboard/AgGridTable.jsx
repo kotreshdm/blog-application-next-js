@@ -22,6 +22,9 @@ const MyTable = (props) => {
           pagination={true}
           paginationPageSize={paginationPageSize}
           paginationPageSizeSelector={[10, 20, 50, 100]}
+          onGridReady={(params) => {
+            params.api.paginationGoToPage(props.defaultPage || 0);
+          }}
         />
       </div>
     </div>

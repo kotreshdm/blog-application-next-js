@@ -119,17 +119,6 @@ function Category() {
       valueGetter: (p) => p.data.name,
       flex: 1,
     },
-
-    {
-      field: "Created By",
-      valueFormatter: (p) => p.data.createdBy,
-      flex: 1,
-    },
-    {
-      field: "Updated By",
-      valueFormatter: (p) => p.data.updatedBy,
-      flex: 1,
-    },
     {
       field: "Category Description",
       valueFormatter: (p) => p.data.description,
