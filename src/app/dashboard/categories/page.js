@@ -22,14 +22,17 @@ import toast from "react-hot-toast";
 import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import { useDispatch, useSelector } from "react-redux";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
-import { updateCategories } from "@/config/redux/categorySlice/categorySlice";
+import {
+  setAddEditCategoryDialog,
+  setSelectedCategory,
+  updateCategories,
+} from "@/config/redux/categorySlice/categorySlice";
 
 function Category() {
-  const { allCategories } = useSelector(categoryDetails);
+  const { allCategories, selectedCategory, addEditCategoryDialog } =
+    useSelector(categoryDetails);
   const dispatch = useDispatch();
-  const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   useEffect(() => {
     if (!allCategories.length) {
@@ -39,11 +42,11 @@ function Category() {
   const ButtonCellRenderer = useCallback((params) => {
     const handleDelete = () => {
       setOpenDeleteConfirmation(true);
-      setCategory(params.data);
+      dispatch(setSelectedCategory(params.data));
     };
     const handleEdit = () => {
-      setOpen(true);
-      setCategory(params.data);
+      dispatch(setAddEditCategoryDialog(true));
+      dispatch(setSelectedCategory(params.data));
     };
     return (
       <Stack direction='row' spacing={1}>
@@ -63,7 +66,6 @@ function Category() {
       if (!response.status === 200) {
         throw new Error("Failed to fetch categories");
       }
-
       dispatch(updateCategories(response.data.categories));
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -73,37 +75,24 @@ function Category() {
   };
 
   const handleAddCategory = () => {
-    setOpen(true);
-    setCategory({});
+    dispatch(setAddEditCategoryDialog(true));
+    dispatch(setSelectedCategory({}));
   };
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-    setCategory({});
-  }, []);
-  const handleCategoryAdded = (newCategory) => {
-    dispatch(updateCategories([newCategory, ...allCategories]));
-  };
-  const handleCategoryEdited = (newCategory) => {
-    const updatedCategory = allCategories.map((category) =>
-      category._id === newCategory._id ? newCategory : category
-    );
-    dispatch(updateCategories(updatedCategory));
-    setCategory({});
-  };
+
   const handleConfirmDelete = async () => {
     try {
       const response = await apiService.delete(
-        `/categories?id=${category._id}`
+        `/categories?id=${selectedCategory._id}`
       );
       if (response.data.success) {
         dispatch(
           updateCategories(
-            allCategories.filter((cat) => cat._id !== category._id)
+            allCategories.filter((cat) => cat._id !== selectedCategory._id)
           )
         );
         setOpenDeleteConfirmation(false);
-        setCategory({});
-        toast.success(`${category.name} deleted successfully`);
+        dispatch(setSelectedCategory({}));
+        toast.success(`${selectedCategory.name} deleted successfully`);
       } else {
         throw new Error(response.message || "Failed to delete category");
       }
@@ -171,27 +160,19 @@ function Category() {
           >
             Refresh
           </Button>
-          {!open && !openDeleteConfirmation && (
+          {!addEditCategoryDialog && !openDeleteConfirmation && (
             <Button
               variant='contained'
               color='primary'
               onClick={handleAddCategory}
               sx={{ textTransform: "capitalize" }}
             >
-              {category._id ? "Edit Category" : "Add Category"}
+              {true ? "Edit Category" : "Add Category"}
             </Button>
           )}
         </Box>
       </div>
-      {!loading && open && (
-        <AddEditCategory
-          isOpen={open}
-          category={category}
-          onClose={handleCancel}
-          onCategoryAdded={handleCategoryAdded}
-          onCategoryEdited={handleCategoryEdited}
-        />
-      )}
+      {!loading && addEditCategoryDialog && <AddEditCategory />}
       {loading ? (
         <CenteredLoading />
       ) : (
@@ -205,7 +186,7 @@ function Category() {
         <DialogTitle id='alert-dialog-title'>{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Are you sure you want to delete <b> {category.name} </b>?
+            Are you sure you want to delete <b> {selectedCategory?.name} </b>?
           </DialogContentText>
           <DialogContentText id='alert-dialog-description'>
             This action cannot be undone.
@@ -215,7 +196,7 @@ function Category() {
           <Button
             onClick={() => {
               setOpenDeleteConfirmation(false);
-              setCategory({});
+              dispatch(setSelectedCategory({}));
             }}
             color='primary'
           >
