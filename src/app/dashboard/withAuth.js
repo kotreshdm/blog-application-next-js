@@ -12,7 +12,6 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 const withAuth = (WrappedComponent) => {
   const AuthComponent = (props) => {
     const { data: session, status } = useSession();
-    console.log(session?.user.role);
 
     if (status === "loading") {
       return (

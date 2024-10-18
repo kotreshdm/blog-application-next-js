@@ -5,16 +5,16 @@ const initialState = {
 };
 
 const categorySlice = createSlice({
-  name: "posts",
+  name: "categories",
   initialState,
   reducers: {
     updateCategories: (state, action) => {
       state.allCategories = action.payload;
     },
-    reset: () => initialState,
+    resetCategories: () => initialState,
   },
 });
 
-export const { updateCategories, reset } = categorySlice.actions;
+export const { updateCategories, resetCategories } = categorySlice.actions;
 
 export default categorySlice.reducer;

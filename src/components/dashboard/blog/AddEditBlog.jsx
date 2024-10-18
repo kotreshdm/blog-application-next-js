@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  TextField,
   Button,
   Box,
   IconButton,
@@ -10,29 +9,40 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import FormTextField from "@/components/form/formTextField/FormTextField";
+import { useDispatch, useSelector } from "react-redux";
+import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 
-const AddEditCategory = React.memo(
-  ({ isOpen, onClose, onCategoryAdded, onCategoryEdited, category }) => {
+const AddEditBlog = React.memo(
+  ({ isOpen, onClose, onBlogAdd, selected, onBlogEdit }) => {
+    const { allCategories } = useSelector(categoryDetails);
+    const dispatch = useDispatch();
     const { data: session } = useSession();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("");
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [removeImage, setRemoveImage] = useState(false);
+    const [slug, setSlug] = useState("");
     useEffect(() => {
-      if (category) {
-        setName(category.name || "");
-        setDescription(category.description || "");
-        if (category.image) {
+      if (selected) {
+        setName(selected.name || "");
+        setDescription(selected.description || "");
+        setCategory(selected.category || "");
+        if (selected.image) {
           setImagePreview(
-            `data:image/jpeg;base64,${Buffer.from(category.image).toString(
+            `data:image/jpeg;base64,${Buffer.from(selected.image).toString(
               "base64"
             )}`
           );
@@ -44,7 +54,7 @@ const AddEditCategory = React.memo(
         setDescription("");
         setImagePreview("");
       }
-    }, [category]);
+    }, [selected]);
 
     const handleImageChange = (e) => {
       const file = e.target.files[0];
@@ -71,38 +81,38 @@ const AddEditCategory = React.memo(
     const handleSubmit = async (e) => {
       e.preventDefault();
       setIsLoading(true);
+
       try {
-        const apiEndpoint = category?._id
-          ? `/categories?id=${category._id}`
-          : "/categories";
-        const method = category?._id ? "put" : "post";
+        const apiEndpoint = selected?._id
+          ? `/blogs?id=${selected._id}`
+          : "/blogs";
+        const method = selected?._id ? "put" : "post";
         const formData = new FormData();
         formData.append("name", name);
         formData.append("description", description);
         formData.append("createdBy", session.user._id);
         formData.append("removeImage", removeImage);
+        formData.append("category", category);
         if (image) {
           formData.append("image", image);
         }
-
         const config = {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         };
-
         const response = await apiService[method](
           apiEndpoint,
           formData,
           config
         );
         toast.success(response.data.message);
-        category._id
-          ? onCategoryEdited?.(response.data.category)
-          : onCategoryAdded?.(response.data.category);
+        selected._id
+          ? onBlogEdit?.(response.data.blog)
+          : onBlogAdd?.(response.data.blog);
         onClose();
       } catch (error) {
-        toast.error(error.message || "Failed to save category");
+        toast.error(error.message || "Failed to save blog");
       } finally {
         setIsLoading(false);
       }
@@ -111,7 +121,7 @@ const AddEditCategory = React.memo(
     return (
       <Dialog open={isOpen} onClose={onClose} maxWidth='sm' fullWidth>
         <DialogTitle>
-          {category ? "Edit Category" : "Add Category"}
+          {selected._id ? "Edit Blog" : "Add Blog"}
           <IconButton
             aria-label='close'
             onClick={onClose}
@@ -129,15 +139,31 @@ const AddEditCategory = React.memo(
           <Box component='form' noValidate sx={{ mt: 1 }}>
             <FormTextField
               required
-              label='Category Name'
+              label='Blog Name'
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <FormTextField
-              label='Category Description'
+              label='Blog Description'
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+            <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
+              <InputLabel id='category-select-label'>Blog Category</InputLabel>
+              <Select
+                labelId='category-select-label'
+                id='category-select'
+                value={category}
+                label='Blog Category'
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {allCategories.map((cat) => (
+                  <MenuItem key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <input
               accept='image/*'
               style={{ display: "none" }}
@@ -200,6 +226,6 @@ const AddEditCategory = React.memo(
   }
 );
 
-AddEditCategory.displayName = "AddEditCategory";
+AddEditBlog.displayName = "AddEditBlog";
 
-export default AddEditCategory;
+export default AddEditBlog;
