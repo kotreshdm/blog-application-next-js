@@ -16,6 +16,8 @@ import { toTitleCase } from "@/utils/helperFunctions/toTitleCase";
 import { useDispatch } from "react-redux";
 import { closeAllBlogsDialogs } from "@/config/redux/blogSlice/blogSlice";
 import { closeAllCategoriesDialogs } from "@/config/redux/categorySlice/categorySlice";
+import Image from "next/image";
+import logo from "@/public/images/logo.png";
 
 const sunRotate = keyframes`
   from {
@@ -34,7 +36,16 @@ const moonBounce = keyframes`
     transform: translateY(-4px);
   }
 `;
-
+const navLinks = [
+  { name: "Home", href: "/" },
+  { name: "About Us", href: "/about" },
+  { name: "Services", href: "/services" },
+  { name: "Tech Pack", href: "/tech-pack" },
+  { name: "Portfolio", href: "/portfolio" },
+  { name: "Manufacturing", href: "/manufacturing" },
+  { name: "Blog", href: "/blog" },
+  { name: "Contact Us", href: "/contact" },
+];
 export default function Navbar({ darkMode, toggleDarkMode }) {
   const { data: session, status, loading } = useSession();
 
@@ -59,9 +70,31 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
             }}
             href='/'
           >
-            Techpack desiginers
+            <Image src={logo} alt='logo' height={40} />
           </Link>
         </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mr: 2,
+          }}
+        >
+          {navLinks.map((nav) => (
+            <Link
+              href={nav.href}
+              style={{
+                textDecoration: "none",
+                color: "inherit",
+                marginRight: "15px",
+              }}
+            >
+              <Button color='inherit' sx={{ textTransform: "capitalize" }}>
+                {nav.name}
+              </Button>
+            </Link>
+          ))}
+        </Box>
         {status === "authenticated" ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Link
@@ -117,7 +150,6 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
             </Link> */}
           </>
         )}
-
         <IconButton
           onClick={toggleDarkMode}
           sx={{
