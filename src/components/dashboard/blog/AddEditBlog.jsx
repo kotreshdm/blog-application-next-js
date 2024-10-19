@@ -44,6 +44,11 @@ const AddEditBlog = React.memo(() => {
   const [removeImage, setRemoveImage] = useState(false);
   const [error, setError] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isBrowser, setIsBrowser] = useState(false);
+
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
 
   useEffect(() => {
     if (selectedBlog) {
@@ -328,28 +333,38 @@ const AddEditBlog = React.memo(() => {
           style={{ height: "74vh" }}
         />
       </Box>
-      <DialogActions
+      <Box
         sx={{
           position: "fixed",
           bottom: 0,
           left: 0,
           right: 0,
-          backgroundColor: "background.paper",
+          // ... other styles ...
         }}
       >
-        <Button sx={{ textTransform: "capitalize" }} onClick={onClose}>
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          variant='contained'
-          color='primary'
-          disabled={isLoading}
-          sx={{ textTransform: "capitalize" }}
+        <DialogActions
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "background.paper",
+          }}
         >
-          {isLoading ? "Loading..." : "Submit"}
-        </Button>
-      </DialogActions>
+          <Button sx={{ textTransform: "capitalize" }} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant='contained'
+            color='primary'
+            disabled={isLoading}
+            sx={{ textTransform: "capitalize" }}
+          >
+            {isLoading ? "Loading..." : "Submit"}
+          </Button>
+        </DialogActions>
+      </Box>
     </Box>
   );
 });
