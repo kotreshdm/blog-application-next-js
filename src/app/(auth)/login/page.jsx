@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [email, setEmail] = useState("kotreshdm@gmail.com");
-  const [password, setPassword] = useState("k");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();

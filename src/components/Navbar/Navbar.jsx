@@ -86,7 +86,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
           </Box>
         ) : (
           <>
-            <Link href='/login' style={{ textDecoration: "none" }}>
+            {/* <Link href='/login' style={{ textDecoration: "none" }}>
               <Button
                 color='inherit'
                 sx={{
@@ -114,7 +114,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
               >
                 Register
               </Button>
-            </Link>
+            </Link> */}
           </>
         )}
 
