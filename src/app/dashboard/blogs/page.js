@@ -226,7 +226,7 @@ function Blogs() {
               onClick={handleAddBlog}
               sx={{ textTransform: "capitalize" }}
             >
-              {selectedBlog?._id ? "Edit Blog" : "Add Blog"}
+              Add Blog
             </Button>
           )}
         </Box>

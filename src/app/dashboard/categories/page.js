@@ -155,7 +155,7 @@ function Category() {
               onClick={handleAddCategory}
               sx={{ textTransform: "capitalize" }}
             >
-              {selectedCategory._id ? "Edit Category" : "Add Category"}
+              Add Category
             </Button>
           )}
         </Box>
