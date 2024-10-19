@@ -20,7 +20,7 @@ const BlogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    seoTitle: {
+    shortDescription: {
       type: String,
       required: true,
     },

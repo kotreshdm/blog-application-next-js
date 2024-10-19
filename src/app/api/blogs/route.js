@@ -36,11 +36,11 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const name = formData.get("name");
+    const shortDescription = formData.get("shortDescription");
     const description = formData.get("description");
     const createdBy = formData.get("createdBy");
     const image = formData.get("image");
     const category = formData.get("category");
-    const seoTitle = formData.get("seoTitle");
     const seoDescription = formData.get("seoDescription");
     const seoKeyword = formData.get("seoKeyword");
     const status = formData.get("status");
@@ -69,11 +69,11 @@ export async function POST(req) {
     const newBlog = await Blog.create({
       name,
       slug: slugify(name, { lower: true }),
+      shortDescription,
       description,
       createdBy,
       image: imageBuffer,
       category,
-      seoTitle,
       seoDescription,
       seoKeyword,
       status,
@@ -102,12 +102,12 @@ export async function PUT(req) {
   try {
     const formData = await req.formData();
     const name = formData.get("name");
+    const shortDescription = formData.get("shortDescription");
     const category = formData.get("category");
     const description = formData.get("description");
     const updatedBy = formData.get("createdBy");
     const image = formData.get("image");
     const removeImage = formData.get("removeImage");
-    const seoTitle = formData.get("seoTitle");
     const seoDescription = formData.get("seoDescription");
     const seoKeyword = formData.get("seoKeyword");
     const status = formData.get("status");
@@ -139,15 +139,14 @@ export async function PUT(req) {
     const updatedData = {
       name,
       slug: slugify(name, { lower: true }),
+      shortDescription,
       description,
       category,
       updatedBy,
-      seoTitle,
       seoDescription,
       seoKeyword,
       status,
     };
-    console.log(status);
 
     if (imageBuffer) {
       updatedData.image = imageBuffer;

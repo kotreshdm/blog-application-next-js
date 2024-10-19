@@ -6,6 +6,7 @@ const initialState = {
   loading: false,
   addEditBlogDialog: false,
   viewBlogDialog: false,
+  lastGridPage: 0,
 };
 
 const blogSlice = createSlice({
@@ -27,6 +28,9 @@ const blogSlice = createSlice({
     setViewBlogDialog: (state, action) => {
       state.viewBlogDialog = action.payload;
     },
+    setLastGridPage: (state, action) => {
+      state.lastGridPage = action.payload;
+    },
     resetBlogs: () => initialState,
     closeAllBlogsDialogs: (state) => {
       state.loading = false;
@@ -43,6 +47,7 @@ export const {
   resetBlogs,
   closeAllBlogsDialogs,
   setViewBlogDialog,
+  setLastGridPage,
 } = blogSlice.actions;
 
 export default blogSlice.reducer;

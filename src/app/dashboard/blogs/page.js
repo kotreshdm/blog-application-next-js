@@ -10,6 +10,7 @@ import {
   DialogTitle,
   IconButton,
   Stack,
+  Typography,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import MyTable from "@/components/dashboard/AgGridTable";
@@ -24,8 +25,8 @@ import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import { useDispatch, useSelector } from "react-redux";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
 import {
-  closeAllBlogsDialogs,
   setAddEditBlogDialog,
+  setLastGridPage,
   setSelectedBlog,
   setViewBlogDialog,
   updateBlogs,
@@ -34,14 +35,18 @@ import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 import ViewBlog from "@/components/dashboard/blog/ViewBlog";
 
 function Blogs() {
-  const { allBlogs, selectedBlog, addEditBlogDialog, viewBlogDialog } =
-    useSelector(blogDetails);
+  const {
+    allBlogs,
+    selectedBlog,
+    addEditBlogDialog,
+    viewBlogDialog,
+    lastGridPage,
+  } = useSelector(blogDetails);
   const { allCategories } = useSelector(categoryDetails);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   useEffect(() => {
-    dispatch(closeAllBlogsDialogs());
     if (!allBlogs.length) {
       fetchBlogs();
     }
@@ -49,6 +54,9 @@ function Blogs() {
       fetchCategories(dispatch);
     }
   }, []);
+  const updateLastGridPage = (page) => {
+    dispatch(setLastGridPage(page));
+  };
   const ButtonCellRenderer = useCallback((params) => {
     const handleDelete = () => {
       setOpenDeleteConfirmation(true);
@@ -155,9 +163,9 @@ function Blogs() {
       flex: 1,
     },
     {
-      field: "seoTitle",
+      field: "shortDescription",
       valueFormatter: (p) => {
-        return p.data.seoTitle;
+        return p.data.shortDescription;
       },
       flex: 1,
     },
@@ -205,21 +213,36 @@ function Blogs() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "1rem",
+          marginBottom: "10px",
+          paddingBottom: "10px",
+          backgroundColor: "background.paper",
+          borderBottom: "1px solid #e0e0e0",
         }}
       >
-        <h1>Blogs</h1>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button
-            variant='outlined'
-            color='primary'
-            onClick={() => fetchBlogs()}
-            sx={{ textTransform: "capitalize" }}
-            startIcon={<RefreshIcon />}
-          >
-            Refresh
-          </Button>
-          {!addEditBlogDialog && !openDeleteConfirmation && (
+        {addEditBlogDialog ? (
+          <Typography variant='h4' sx={{ mt: 2, p: 0 }}>
+            {selectedBlog._id
+              ? `Edit Blog : ${selectedBlog.name.slice(0, 50)} ${
+                  selectedBlog.name.length > 50 ? "..." : ""
+                } `
+              : `Adding new blog...`}
+          </Typography>
+        ) : (
+          <Typography variant='h4' sx={{ mt: 2, p: 0 }}>
+            Blogs
+          </Typography>
+        )}
+        {!addEditBlogDialog && (
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            <Button
+              variant='outlined'
+              color='primary'
+              onClick={() => fetchBlogs()}
+              sx={{ textTransform: "capitalize" }}
+              startIcon={<RefreshIcon />}
+            >
+              Refresh
+            </Button>
             <Button
               variant='contained'
               color='primary'
@@ -228,14 +251,21 @@ function Blogs() {
             >
               Add Blog
             </Button>
-          )}
-        </Box>
+          </Box>
+        )}
       </div>
-      {!loading && addEditBlogDialog && <AddEditBlog />}
+
       {loading ? (
         <CenteredLoading />
+      ) : addEditBlogDialog ? (
+        <AddEditBlog />
       ) : (
-        <MyTable columnDefs={columnDefs} data={allBlogs} />
+        <MyTable
+          columnDefs={columnDefs}
+          data={allBlogs}
+          defaultPage={lastGridPage}
+          updateLastGridPage={updateLastGridPage}
+        />
       )}
       <Dialog
         fullWidth

@@ -10,6 +10,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const MyTable = (props) => {
   const { data, columnDefs, paginationPageSize = 10 } = props;
+  const onPaginationChanged = (params) => {
+    if (props.updateLastGridPage) {
+      const currentPage = params.api.paginationGetCurrentPage();
+      props.updateLastGridPage(currentPage);
+    }
+  };
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <div
@@ -17,6 +23,7 @@ const MyTable = (props) => {
         className={"ag-theme-quartz"}
       >
         <AgGridReact
+          onPaginationChanged={onPaginationChanged}
           rowData={data}
           columnDefs={columnDefs}
           pagination={true}

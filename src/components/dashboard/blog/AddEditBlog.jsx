@@ -4,17 +4,12 @@ import React, { useState, useEffect } from "react";
 import {
   Button,
   Box,
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   DialogActions,
   Select,
   FormControl,
   InputLabel,
   MenuItem,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
@@ -27,6 +22,8 @@ import {
   updateBlogs,
 } from "@/config/redux/blogSlice/blogSlice";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const AddEditBlog = React.memo(() => {
   const { allCategories } = useSelector(categoryDetails);
@@ -36,10 +33,10 @@ const AddEditBlog = React.memo(() => {
   const { data: session } = useSession();
 
   const [name, setName] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
   const [description, setDescription] = useState("");
   const [seoKeyword, setSeoKeyword] = useState("");
   const [seoDescription, setSeoDescription] = useState("");
-  const [seoTitle, setSeoTitle] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("active");
   const [image, setImage] = useState(null);
@@ -47,15 +44,14 @@ const AddEditBlog = React.memo(() => {
   const [removeImage, setRemoveImage] = useState(false);
   const [error, setError] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    console.log(selectedBlog);
 
+  useEffect(() => {
     if (selectedBlog) {
       setName(selectedBlog.name || "");
+      setShortDescription(selectedBlog.shortDescription || "");
       setDescription(selectedBlog.description || "");
       setCategory(selectedBlog.category || "");
       setStatus(selectedBlog.status || "active");
-      setSeoTitle(selectedBlog.seoTitle || "");
       setSeoDescription(selectedBlog.seoDescription || "");
       setSeoKeyword(selectedBlog.seoKeyword || "");
       setImagePreview(
@@ -102,21 +98,20 @@ const AddEditBlog = React.memo(() => {
     if (!name) {
       errors.name = "Blog name is required";
     }
+    if (!shortDescription) {
+      errors.shortDescription = "Short description is required";
+    }
     if (!description) {
       errors.description = "Blog description is required";
     }
     if (!category) {
       errors.category = "Blog category is required";
     }
-    if (!seoTitle) {
-      errors.seoTitle = "SEO title is required";
-    }
+
     if (!seoDescription) {
       errors.seoDescription = "SEO description is required";
     }
-    if (!seoKeyword) {
-      errors.seoKeyword = "SEO keyword is required";
-    }
+
     if (!status) {
       errors.status = "Blog status is required";
     }
@@ -134,11 +129,11 @@ const AddEditBlog = React.memo(() => {
       const method = selectedBlog?._id ? "put" : "post";
       const formData = new FormData();
       formData.append("name", name);
+      formData.append("shortDescription", shortDescription);
       formData.append("description", description);
       formData.append("createdBy", session.user._id);
       formData.append("removeImage", removeImage);
       formData.append("category", category);
-      formData.append("seoTitle", seoTitle);
       formData.append("seoDescription", seoDescription);
       formData.append("seoKeyword", seoKeyword);
       formData.append("status", status);
@@ -169,110 +164,108 @@ const AddEditBlog = React.memo(() => {
       setIsLoading(false);
     }
   };
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "list",
+    "bullet",
+    "link",
+    "image",
+  ];
 
   return (
-    <Dialog open={addEditBlogDialog} onClose={onClose} maxWidth='sm' fullWidth>
-      <DialogTitle>
-        {selectedBlog._id ? "Edit Blog" : "Add Blog"}
-        <IconButton
-          aria-label='close'
-          onClick={onClose}
+    <Box sx={{ overflow: "hidden" }}>
+      <Box component='form' noValidate sx={{ mt: 1 }}>
+        <Box
           sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 2,
           }}
         >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent>
-        <Box component='form' noValidate sx={{ mt: 1 }}>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: 2,
-              mb: 2,
-            }}
-            item={2}
-          >
-            <FormTextField
-              required
-              fullWidth
-              label='Blog Name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              error={error.name}
-              helperText={error.name}
-            />
-            <FormTextField
-              fullWidth
-              label='Blog Description'
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              error={error.description}
-              helperText={error.description}
-            />
-            <FormTextField
-              fullWidth
-              label='SEO Title'
-              value={seoTitle}
-              onChange={(e) => setSeoTitle(e.target.value)}
-              error={error.seoTitle}
-              helperText={error.seoTitle}
-            />
-            <FormTextField
-              fullWidth
-              label='SEO Keyword'
-              value={seoKeyword}
-              onChange={(e) => setSeoKeyword(e.target.value)}
-              error={error.seoKeyword}
-              helperText={error.seoKeyword}
-            />
-            <FormTextField
-              label='SEO Description'
-              value={seoDescription}
-              onChange={(e) => setSeoDescription(e.target.value)}
-              error={error.seoDescription}
-              helperText={error.seoDescription}
-            />
-            <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
-              <InputLabel id='category-select-label'>Blog Category</InputLabel>
-              <Select
-                labelId='category-select-label'
-                id='category-select'
-                value={category}
-                label='Blog Category'
-                onChange={(e) => setCategory(e.target.value)}
-                error={error.category}
-                helperText={error.category}
-              >
-                {allCategories.map((cat) => (
-                  <MenuItem key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
-              <InputLabel id='category-status-label'>Blog Status</InputLabel>
-              <Select
-                labelId='category-status-label'
-                id='category-status'
-                value={status}
-                label='Blog Status'
-                onChange={(e) => setStatus(e.target.value)}
-                error={error.status}
-                helperText={error.status}
-              >
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-
+          <FormTextField
+            required
+            fullWidth
+            label='Blog Name'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={error.name}
+            helperText={error.name}
+            autoFocus={true}
+          />
+          <FormTextField
+            fullWidth
+            label='Short Description'
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            error={error.shortDescription}
+            helperText={error.shortDescription}
+          />
+          <FormTextField
+            fullWidth
+            label='SEO Keyword'
+            value={seoKeyword}
+            onChange={(e) => setSeoKeyword(e.target.value)}
+            error={error.seoKeyword}
+            helperText={error.seoKeyword}
+          />
+          <FormTextField
+            fullWidth
+            label='SEO Description'
+            value={seoDescription}
+            onChange={(e) => setSeoDescription(e.target.value)}
+            error={error.seoDescription}
+            helperText={error.seoDescription}
+          />
+          <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
+            <InputLabel id='category-select-label'>Blog Category</InputLabel>
+            <Select
+              labelId='category-select-label'
+              id='category-select'
+              value={category}
+              label='Blog Category'
+              onChange={(e) => setCategory(e.target.value)}
+              error={error.category}
+              helperText={error.category}
+            >
+              {allCategories.map((cat) => (
+                <MenuItem key={cat._id} value={cat._id}>
+                  {cat.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
+            <InputLabel id='category-status-label'>Blog Status</InputLabel>
+            <Select
+              labelId='category-status-label'
+              id='category-status'
+              value={status}
+              label='Blog Status'
+              onChange={(e) => setStatus(e.target.value)}
+              error={error.status}
+              helperText={error.status}
+            >
+              <MenuItem value='active'>Active</MenuItem>
+              <MenuItem value='inactive'>Inactive</MenuItem>
+            </Select>
+          </FormControl>
           <input
             accept='image/*'
             style={{ display: "none" }}
@@ -280,21 +273,29 @@ const AddEditBlog = React.memo(() => {
             type='file'
             onChange={handleImageChange}
           />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 4,
+          }}
+        >
           {imagePreview && (
             <Box mt={2}>
               <img
                 src={imagePreview}
                 alt='Preview'
-                style={{ maxWidth: "100%", maxHeight: "200px" }}
+                style={{ maxWidth: "100%", maxHeight: "100px" }}
               />
             </Box>
           )}
-          <Box sx={{ mt: 2, mb: 2, display: "flex", gap: 2 }}>
+          <Box sx={{ m: 2, p: 2 }}>
             <label htmlFor='raised-button-file'>
               <Button
                 variant='contained'
                 component='span'
-                sx={{ textTransform: "capitalize" }}
+                sx={{ textTransform: "capitalize", m: 2 }}
               >
                 {imagePreview ? "Change Image" : "Upload Image"}
               </Button>
@@ -304,6 +305,7 @@ const AddEditBlog = React.memo(() => {
                 sx={{ textTransform: "capitalize" }}
                 variant='outlined'
                 color='secondary'
+                component='span'
                 onClick={() => {
                   setImagePreview(null);
                   setImage(null);
@@ -315,8 +317,26 @@ const AddEditBlog = React.memo(() => {
             )}
           </Box>
         </Box>
-      </DialogContent>
-      <DialogActions>
+      </Box>
+      <Box sx={{ overflow: "auto", height: "80vh" }}>
+        <ReactQuill
+          modules={modules}
+          formats={formats}
+          theme='snow'
+          value={description}
+          onChange={setDescription}
+          style={{ height: "74vh" }}
+        />
+      </Box>
+      <DialogActions
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "background.paper",
+        }}
+      >
         <Button sx={{ textTransform: "capitalize" }} onClick={onClose}>
           Cancel
         </Button>
@@ -330,7 +350,7 @@ const AddEditBlog = React.memo(() => {
           {isLoading ? "Loading..." : "Submit"}
         </Button>
       </DialogActions>
-    </Dialog>
+    </Box>
   );
 });
 

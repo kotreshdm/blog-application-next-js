@@ -5,6 +5,7 @@ import {
   setSelectedBlog,
   setViewBlogDialog,
 } from "@/config/redux/blogSlice/blogSlice";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,8 @@ import {
   Typography,
   DialogActions,
   Button,
+  Box,
+  IconButton,
 } from "@mui/material";
 
 const ViewBlog = () => {
@@ -23,136 +26,85 @@ const ViewBlog = () => {
     dispatch(setSelectedBlog({}));
   };
   return (
-    <Dialog open={viewBlogDialog} onClose={handleClose} fullWidth>
-      <DialogTitle>Blog Details</DialogTitle>
+    <Dialog open={viewBlogDialog} onClose={handleClose} fullWidth maxWidth='lg'>
+      <DialogTitle>
+        Blog Details
+        <IconButton
+          aria-label='close'
+          onClick={handleClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
-        <table>
+        <table
+          style={{ width: "100%" }}
+          border={1}
+          cellPadding={5}
+          cellSpacing={0}
+        >
           <tbody>
             <tr>
               <td>
-                <Typography variant='body1'>Name:</Typography>
+                <Typography variant='body1'>Name</Typography>
               </td>
+              <td>
+                <Typography variant='body1'>Slug</Typography>
+              </td>
+              <td>
+                <Typography variant='body1'>Category</Typography>
+              </td>
+              <td>
+                <Typography variant='body1'>SEO Description</Typography>
+              </td>
+              <td>
+                <Typography variant='body1'>SEO Keyword</Typography>
+              </td>
+
+              <td>
+                <Typography variant='body1'>Status</Typography>
+              </td>
+              <td>
+                <Typography variant='body1'>Created At</Typography>
+              </td>
+              <td>
+                <Typography variant='body1'>Updated At</Typography>
+              </td>
+            </tr>
+            <tr>
               <td>
                 <Typography variant='body1'>{selectedBlog.name}</Typography>
               </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Slug:</Typography>
-              </td>
+
               <td>
                 <Typography variant='body1'>{selectedBlog.slug}</Typography>
               </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Description:</Typography>
-              </td>
-              <td>
-                <Typography variant='body1'>
-                  {selectedBlog.description}
-                </Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Category:</Typography>
-              </td>
               <td>
                 <Typography variant='body1'>{selectedBlog.category}</Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Image:</Typography>
-              </td>
-              <td>
-                {selectedBlog.image ? (
-                  <img
-                    src={`data:image/jpeg;base64,${Buffer.from(
-                      selectedBlog.image
-                    ).toString("base64")}`}
-                    alt='Blog'
-                    style={{
-                      width: "auto",
-                      height: "100px",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  <Typography variant='body1'>No Image</Typography>
-                )}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>SEO Title:</Typography>
-              </td>
-              <td>
-                <Typography variant='body1'>{selectedBlog.seoTitle}</Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>SEO Description:</Typography>
               </td>
               <td>
                 <Typography variant='body1'>
                   {selectedBlog.seoDescription}
                 </Typography>
               </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>SEO Keyword:</Typography>
-              </td>
               <td>
                 <Typography variant='body1'>
                   {selectedBlog.seoKeyword}
                 </Typography>
               </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Created By:</Typography>
-              </td>
-              <td>
-                <Typography variant='body1'>
-                  {selectedBlog.createdBy}
-                </Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Updated By:</Typography>
-              </td>
-              <td>
-                <Typography variant='body1'>
-                  {selectedBlog.updatedBy}
-                </Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Status:</Typography>
-              </td>
               <td>
                 <Typography variant='body1'>{selectedBlog.status}</Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Created At:</Typography>
               </td>
               <td>
                 <Typography variant='body1'>
                   {new Date(selectedBlog.createdAt).toLocaleString()}
                 </Typography>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Typography variant='body1'>Updated At:</Typography>
               </td>
               <td>
                 <Typography variant='body1'>
@@ -162,9 +114,41 @@ const ViewBlog = () => {
             </tr>
           </tbody>
         </table>
+        {selectedBlog.image && (
+          <img
+            src={`data:image/jpeg;base64,${Buffer.from(
+              selectedBlog.image
+            ).toString("base64")}`}
+            alt='Blog'
+            style={{
+              width: "auto",
+              height: "100px",
+              objectFit: "cover",
+            }}
+          />
+        )}
+        {selectedBlog.shortDescription}
+        <Box sx={{ mt: 1 }}>
+          <Typography variant='h6'>Description:</Typography>
+          <Box
+            dangerouslySetInnerHTML={{ __html: selectedBlog.description }}
+            sx={{
+              "& img": { maxWidth: "100%", height: "auto" },
+              "& a": { color: "primary.main", textDecoration: "none" },
+              "& ul, & ol": { paddingLeft: 2 },
+              "& blockquote": {
+                borderLeft: "3px solid #ccc",
+                margin: "1.5em 10px",
+                padding: "0.5em 10px",
+              },
+            }}
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
+        <Button onClick={handleClose} variant='contained' color='secondary'>
+          Close
+        </Button>
       </DialogActions>
     </Dialog>
   );

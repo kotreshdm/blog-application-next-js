@@ -8,5 +8,6 @@ export const blogDetails = createSelector([selectBlogState], (pipeline) => ({
   selectedBlog: pipeline.selectedBlog,
   addEditBlogDialog: pipeline.addEditBlogDialog,
   viewBlogDialog: pipeline.viewBlogDialog,
+  lastGridPage: pipeline.lastGridPage,
   loading: pipeline.loading,
 }));

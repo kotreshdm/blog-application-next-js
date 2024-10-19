@@ -23,7 +23,6 @@ import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import { useDispatch, useSelector } from "react-redux";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 import {
-  closeAllCategoriesDialogs,
   setAddEditCategoryDialog,
   setSelectedCategory,
   updateCategories,
@@ -39,7 +38,6 @@ function Category() {
     if (!allCategories.length) {
       fetchCategories(dispatch);
     }
-    dispatch(closeAllCategoriesDialogs());
   }, []);
   const ButtonCellRenderer = useCallback((params) => {
     const handleDelete = () => {
