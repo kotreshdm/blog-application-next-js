@@ -1,12 +1,12 @@
 import React from "react";
 import { Container } from "@mui/material";
 
-const ServicesPage = () => {
+const AppFooter = () => {
   return (
     <Container maxWidth='sm' sx={{ textAlign: "center", marginTop: "2rem" }}>
-      ServicesPage
+      AppFooter
     </Container>
   );
 };
 
-export default ServicesPage;
+export default AppFooter;

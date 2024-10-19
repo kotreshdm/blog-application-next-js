@@ -1,7 +1,12 @@
 import React from "react";
+import { Container } from "@mui/material";
 
 const AboutPage = () => {
-  return <div>AboutPage</div>;
+  return (
+    <Container maxWidth='sm' sx={{ textAlign: "center", marginTop: "2rem" }}>
+      AboutPage
+    </Container>
+  );
 };
 
 export default AboutPage;
