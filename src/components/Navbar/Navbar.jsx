@@ -82,6 +82,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
         >
           {navLinks.map((nav) => (
             <Link
+              key={nav.name}
               href={nav.href}
               style={{
                 textDecoration: "none",
