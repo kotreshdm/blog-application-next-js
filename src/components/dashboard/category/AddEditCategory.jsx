@@ -97,8 +97,8 @@ const AddEditCategory = React.memo(() => {
         : "/categories";
       const method = selectedCategory?._id ? "put" : "post";
       const formData = new FormData();
-      formData.append("name", selectedCategory.name);
-      formData.append("description", selectedCategory.description);
+      formData.append("name", selectedCategory.name || "");
+      formData.append("description", selectedCategory.description || "");
       formData.append("createdBy", session.user._id);
       formData.append("removeImage", removeImage);
       if (selectedCategory.image) {
