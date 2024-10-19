@@ -167,6 +167,8 @@ function Category() {
         <MyTable columnDefs={columnDefs} data={allCategories} />
       )}
       <Dialog
+        fullWidth
+        maxWidth='sm'
         open={openDeleteConfirmation}
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'

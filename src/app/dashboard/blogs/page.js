@@ -238,6 +238,8 @@ function Blogs() {
         <MyTable columnDefs={columnDefs} data={allBlogs} />
       )}
       <Dialog
+        fullWidth
+        maxWidth='sm'
         open={openDeleteConfirmation}
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
