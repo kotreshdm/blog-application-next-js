@@ -16,59 +16,57 @@ import MyTable from "@/components/dashboard/AgGridTable";
 import { useCallback, useEffect, useState } from "react";
 import AddEditBlog from "@/components/dashboard/blog/AddEditBlog";
 import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
 import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import { useDispatch, useSelector } from "react-redux";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
-import { updateBlogs } from "@/config/redux/blogSlice/blogSlice";
+import {
+  closeAllBlogsDialogs,
+  setAddEditBlogDialog,
+  setSelectedBlog,
+  setViewBlogDialog,
+  updateBlogs,
+} from "@/config/redux/blogSlice/blogSlice";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
-import { updateCategories } from "@/config/redux/categorySlice/categorySlice";
+import ViewBlog from "@/components/dashboard/blog/ViewBlog";
 
-function Category() {
-  const { allBlogs } = useSelector(blogDetails);
+function Blogs() {
+  const { allBlogs, selectedBlog, addEditBlogDialog, viewBlogDialog } =
+    useSelector(blogDetails);
   const { allCategories } = useSelector(categoryDetails);
   const dispatch = useDispatch();
-  const [category, setCategory] = useState({});
-  const [selectedBlog, setSelectedBlog] = useState({});
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   useEffect(() => {
+    dispatch(closeAllBlogsDialogs());
     if (!allBlogs.length) {
       fetchBlogs();
     }
     if (!allCategories.length) {
-      fetchCategories();
+      fetchCategories(dispatch);
     }
   }, []);
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const response = await apiService.get("/categories", {});
-      if (!response.status === 200) {
-        throw new Error("Failed to fetch categories");
-      }
-
-      dispatch(updateCategories(response.data.categories));
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   const ButtonCellRenderer = useCallback((params) => {
     const handleDelete = () => {
       setOpenDeleteConfirmation(true);
-      setSelectedBlog(params.data);
+      dispatch(setSelectedBlog(params.data));
     };
     const handleEdit = () => {
-      setOpen(true);
-      setSelectedBlog(params.data);
+      dispatch(setAddEditBlogDialog(true));
+      dispatch(setSelectedBlog(params.data));
+    };
+    const handleView = () => {
+      dispatch(setSelectedBlog(params.data));
+      dispatch(setViewBlogDialog(true));
     };
     return (
       <Stack direction='row' spacing={1}>
+        <IconButton onClick={handleView} size='small' color='primary'>
+          <VisibilityIcon />
+        </IconButton>
         <IconButton onClick={handleEdit} size='small' color='primary'>
           <EditIcon />
         </IconButton>
@@ -93,43 +91,26 @@ function Category() {
     }
   };
   const handleAddBlog = () => {
-    setOpen(true);
-    setSelectedBlog({});
+    dispatch(setAddEditBlogDialog(true));
+    dispatch(setSelectedBlog({}));
   };
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-    setSelectedBlog({});
-  }, []);
-  const handleBlogAdd = (newPost) => {
-    dispatch(updateBlogs([newPost, ...allBlogs]));
-  };
-  const handleBlogEdit = (newPost) => {
-    const updatedBlog = allBlogs.map((post) =>
-      post._id === newPost._id ? newPost : post
-    );
-    dispatch(updateBlogs(updatedBlog));
-    setCategory({});
-  };
+
   const handleConfirmDelete = async () => {
     try {
-      const response = await apiService.delete(
-        `/categories?id=${category._id}`
-      );
+      const response = await apiService.delete(`/blogs?id=${selectedBlog._id}`);
       if (response.data.success) {
-        dispatch(
-          updateCategories(
-            allCategories.filter((cat) => cat._id !== category._id)
-          )
-        );
         setOpenDeleteConfirmation(false);
-        setCategory({});
-        toast.success(`${category.name} deleted successfully`);
+        dispatch(
+          updateBlogs(allBlogs.filter((blog) => blog._id !== selectedBlog._id))
+        );
+        dispatch(setSelectedBlog({}));
+        toast.success(response.data.message);
       } else {
-        throw new Error(response.message || "Failed to delete category");
+        throw new Error(response.message || "Failed to delete post");
       }
     } catch (error) {
-      console.error("Error deleting category:", error);
-      toast.error(error.message || "Failed to delete category");
+      console.error("Error deleting post:", error);
+      toast.error(error.message || "Failed to delete post");
     }
   };
 
@@ -174,12 +155,49 @@ function Category() {
       flex: 1,
     },
     {
+      field: "seoTitle",
+      valueFormatter: (p) => {
+        return p.data.seoTitle;
+      },
+      flex: 1,
+    },
+    {
+      field: "seoDescription",
+      valueFormatter: (p) => {
+        return p.data.seoDescription;
+      },
+      flex: 1,
+    },
+    {
+      field: "seoKeyword",
+      valueFormatter: (p) => {
+        return p.data.seoKeyword;
+      },
+      flex: 1,
+    },
+    {
+      field: "updatedAt",
+      valueFormatter: (p) => {
+        return new Date(p.data.updatedAt).toLocaleDateString();
+      },
+      flex: 1,
+    },
+    {
+      field: "status",
+      valueFormatter: (p) => {
+        return p.data.status === "active" ? "🟢" : "🔴";
+      },
+      flex: 1,
+    },
+
+    {
       headerName: "Actions",
       field: "actions",
       cellRenderer: ButtonCellRenderer,
-      flex: 1,
+      flex: 2,
     },
   ];
+
   return (
     <div>
       <div
@@ -201,27 +219,19 @@ function Category() {
           >
             Refresh
           </Button>
-          {!open && !openDeleteConfirmation && (
+          {!addEditBlogDialog && !openDeleteConfirmation && (
             <Button
               variant='contained'
               color='primary'
               onClick={handleAddBlog}
               sx={{ textTransform: "capitalize" }}
             >
-              {category._id ? "Edit Blog" : "Add Blog"}
+              {selectedBlog?._id ? "Edit Blog" : "Add Blog"}
             </Button>
           )}
         </Box>
       </div>
-      {!loading && open && (
-        <AddEditBlog
-          isOpen={open}
-          selected={selectedBlog}
-          onClose={handleCancel}
-          onBlogAdd={handleBlogAdd}
-          onBlogEdit={handleBlogEdit}
-        />
-      )}
+      {!loading && addEditBlogDialog && <AddEditBlog />}
       {loading ? (
         <CenteredLoading />
       ) : (
@@ -235,7 +245,7 @@ function Category() {
         <DialogTitle id='alert-dialog-title'>{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Are you sure you want to delete <b> {category.name} </b>?
+            Are you sure you want to delete <b> {selectedBlog?.name} </b>?
           </DialogContentText>
           <DialogContentText id='alert-dialog-description'>
             This action cannot be undone.
@@ -245,7 +255,7 @@ function Category() {
           <Button
             onClick={() => {
               setOpenDeleteConfirmation(false);
-              setCategory({});
+              dispatch(setSelectedBlog({}));
             }}
             color='primary'
           >
@@ -256,8 +266,9 @@ function Category() {
           </Button>
         </DialogActions>
       </Dialog>
+      {viewBlogDialog && <ViewBlog />}
     </div>
   );
 }
 
-export default Category;
+export default Blogs;

@@ -9,5 +9,7 @@ export const categoryDetails = createSelector(
     selectedCategory: pipeline.selectedCategory,
     addEditCategoryDialog: pipeline.addEditCategoryDialog,
     caategoryCount: pipeline.allCategories.length,
+    loading: pipeline.loading,
+    error: pipeline.error,
   })
 );

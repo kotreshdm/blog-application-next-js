@@ -90,7 +90,7 @@ export default function Login() {
             <Button
               type='submit'
               variant='contained'
-              sx={{ mt: 3, mb: 2, width: "60%" }}
+              sx={{ mt: 3, mb: 2, width: "60%", textTransform: "capitalize" }}
               disabled={loading}
             >
               {loading ? "Logging in..." : "Login"}

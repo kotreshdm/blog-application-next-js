@@ -23,21 +23,23 @@ import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import { useDispatch, useSelector } from "react-redux";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 import {
+  closeAllCategoriesDialogs,
   setAddEditCategoryDialog,
   setSelectedCategory,
   updateCategories,
 } from "@/config/redux/categorySlice/categorySlice";
+import { fetchCategories } from "@/config/helperFunction/helperFunction";
 
 function Category() {
-  const { allCategories, selectedCategory, addEditCategoryDialog } =
+  const { allCategories, selectedCategory, addEditCategoryDialog, loading } =
     useSelector(categoryDetails);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   useEffect(() => {
     if (!allCategories.length) {
-      fetchCategories();
+      fetchCategories(dispatch);
     }
+    dispatch(closeAllCategoriesDialogs());
   }, []);
   const ButtonCellRenderer = useCallback((params) => {
     const handleDelete = () => {
@@ -59,20 +61,6 @@ function Category() {
       </Stack>
     );
   }, []);
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const response = await apiService.get("/categories", {});
-      if (!response.status === 200) {
-        throw new Error("Failed to fetch categories");
-      }
-      dispatch(updateCategories(response.data.categories));
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddCategory = () => {
     dispatch(setAddEditCategoryDialog(true));
@@ -154,7 +142,7 @@ function Category() {
           <Button
             variant='outlined'
             color='primary'
-            onClick={() => fetchCategories()}
+            onClick={() => fetchCategories(dispatch)}
             sx={{ textTransform: "capitalize" }}
             startIcon={<RefreshIcon />}
           >
@@ -167,7 +155,7 @@ function Category() {
               onClick={handleAddCategory}
               sx={{ textTransform: "capitalize" }}
             >
-              {true ? "Edit Category" : "Add Category"}
+              {selectedCategory._id ? "Edit Category" : "Add Category"}
             </Button>
           )}
         </Box>

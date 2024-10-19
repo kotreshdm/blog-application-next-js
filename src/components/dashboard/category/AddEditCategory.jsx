@@ -29,7 +29,7 @@ const AddEditCategory = React.memo(() => {
   const dispatch = useDispatch();
   const { allCategories, selectedCategory, addEditCategoryDialog } =
     useSelector(categoryDetails);
-
+  const [error, setError] = useState({});
   const { data: session } = useSession();
   const [imagePreview, setImagePreview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ const AddEditCategory = React.memo(() => {
   }, []);
 
   const onClose = () => {
-    dispatch(setSelectedCategory(null));
+    dispatch(setSelectedCategory({}));
     dispatch(setAddEditCategoryDialog(false));
   };
   const handleImageChange = (e) => {
@@ -81,6 +81,16 @@ const AddEditCategory = React.memo(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    const errors = {};
+    if (!selectedCategory.name) {
+      errors.name = "Category name is required";
+    }
+    if (Object.keys(errors).length > 0) {
+      setError(errors);
+      setIsLoading(false);
+      return;
+    }
+    setError({});
     try {
       const apiEndpoint = selectedCategory?._id
         ? `/categories?id=${selectedCategory._id}`
@@ -159,6 +169,8 @@ const AddEditCategory = React.memo(() => {
                 })
               )
             }
+            error={error.name}
+            helperText={error.name}
           />
           <FormTextField
             label='Category Description'
@@ -171,6 +183,8 @@ const AddEditCategory = React.memo(() => {
                 })
               )
             }
+            error={error.description}
+            helperText={error.description}
           />
           <input
             accept='image/*'

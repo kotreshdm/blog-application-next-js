@@ -4,6 +4,8 @@ const initialState = {
   allCategories: [],
   selectedCategory: {},
   addEditCategoryDialog: false,
+  loading: false,
+  error: null,
 };
 
 const categorySlice = createSlice({
@@ -19,7 +21,17 @@ const categorySlice = createSlice({
     setAddEditCategoryDialog: (state, action) => {
       state.addEditCategoryDialog = action.payload;
     },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
     resetCategories: () => initialState,
+    closeAllCategoriesDialogs: (state) => {
+      state.loading = false;
+      state.addEditCategoryDialog = false;
+    },
   },
 });
 
@@ -28,6 +40,9 @@ export const {
   setSelectedCategory,
   setAddEditCategoryDialog,
   resetCategories,
+  setLoading,
+  setError,
+  closeAllCategoriesDialogs,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

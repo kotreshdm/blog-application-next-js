@@ -20,6 +20,18 @@ const BlogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    seoTitle: {
+      type: String,
+      required: true,
+    },
+    seoDescription: {
+      type: String,
+      required: true,
+    },
+    seoKeyword: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
     },
@@ -33,6 +45,11 @@ const BlogSchema = new mongoose.Schema(
     image: {
       type: Buffer,
       contentType: String,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
     },
   },
   {

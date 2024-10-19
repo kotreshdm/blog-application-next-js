@@ -40,6 +40,10 @@ export async function POST(req) {
     const createdBy = formData.get("createdBy");
     const image = formData.get("image");
     const category = formData.get("category");
+    const seoTitle = formData.get("seoTitle");
+    const seoDescription = formData.get("seoDescription");
+    const seoKeyword = formData.get("seoKeyword");
+    const status = formData.get("status");
     if (!name) {
       return NextResponse.json(
         { success: false, message: "Name is required" },
@@ -69,6 +73,10 @@ export async function POST(req) {
       createdBy,
       image: imageBuffer,
       category,
+      seoTitle,
+      seoDescription,
+      seoKeyword,
+      status,
     });
 
     return NextResponse.json({
@@ -99,6 +107,10 @@ export async function PUT(req) {
     const updatedBy = formData.get("createdBy");
     const image = formData.get("image");
     const removeImage = formData.get("removeImage");
+    const seoTitle = formData.get("seoTitle");
+    const seoDescription = formData.get("seoDescription");
+    const seoKeyword = formData.get("seoKeyword");
+    const status = formData.get("status");
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
@@ -130,7 +142,12 @@ export async function PUT(req) {
       description,
       category,
       updatedBy,
+      seoTitle,
+      seoDescription,
+      seoKeyword,
+      status,
     };
+    console.log(status);
 
     if (imageBuffer) {
       updatedData.image = imageBuffer;

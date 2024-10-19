@@ -13,6 +13,9 @@ import { keyframes } from "@mui/system";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { toTitleCase } from "@/utils/helperFunctions/toTitleCase";
+import { useDispatch } from "react-redux";
+import { closeAllBlogsDialogs } from "@/config/redux/blogSlice/blogSlice";
+import { closeAllCategoriesDialogs } from "@/config/redux/categorySlice/categorySlice";
 
 const sunRotate = keyframes`
   from {
@@ -35,6 +38,15 @@ const moonBounce = keyframes`
 export default function Navbar({ darkMode, toggleDarkMode }) {
   const { data: session, status, loading } = useSession();
 
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    return () => {
+      dispatch(closeAllBlogsDialogs());
+      dispatch(closeAllCategoriesDialogs());
+    };
+  }, [darkMode]);
   return (
     <AppBar position='sticky'>
       <Toolbar>
