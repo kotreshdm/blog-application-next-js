@@ -30,7 +30,7 @@ import { blogDetails } from "@/config/redux/selectors/blogSelectors";
 import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
-import Login from "@/app/(auth)/login/page";
+import "@/app/globals.css";
 
 const AddEditBlog = React.memo(() => {
   const { allCategories } = useSelector(categoryDetails);
@@ -104,12 +104,7 @@ const AddEditBlog = React.memo(() => {
   };
 
   const handleSubmit = async (e) => {
-    // Remove empty <p> tags and <p> tags with only <br> from description
-    const cleanDescription = description.replace(
-      /<p>\s*(<br\s*\/?>\s*)*<\/p>|<p><\/p>/g,
-      ""
-    );
-    setDescription(cleanDescription);
+    // Remove empty <p> tags, <p> tags with only <br>, and limit consecutive empty lines to 1
     setIsLoading(true);
     const errors = {};
     if (!name) {
@@ -147,7 +142,7 @@ const AddEditBlog = React.memo(() => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("shortDescription", shortDescription);
-      formData.append("description", cleanDescription);
+      formData.append("description", description);
       formData.append("createdBy", session.user._id);
       formData.append("removeImage", removeImage);
       formData.append("category", category);
@@ -182,12 +177,14 @@ const AddEditBlog = React.memo(() => {
       setIsLoading(false);
     }
   };
+
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
       ["bold", "italic", "underline", "strike"],
       [{ color: [] }, { background: [] }],
       [{ list: "ordered" }, { list: "bullet" }],
+      [{ align: [] }],
       ["link", "image"],
       ["clean"],
     ],
@@ -205,6 +202,7 @@ const AddEditBlog = React.memo(() => {
     "bullet",
     "link",
     "image",
+    "align",
   ];
 
   return (

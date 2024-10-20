@@ -45,7 +45,6 @@ const Blogs = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
-  const [allCategoriesWithDetails, setAllCategoriesWithDetails] = useState([]);
   useEffect(() => {
     if (!allBlogs.length) {
       fetchBlogs();
@@ -58,17 +57,13 @@ const Blogs = () => {
   const getBlogById = async (id) => {
     const response = await apiService.get(`/blogs?id=${id}`);
     if (response.data.success) {
-      setAllCategoriesWithDetails([
-        response.data.blog,
-        ...allCategoriesWithDetails,
-      ]);
       dispatch(setSelectedBlog(response.data.blog));
     }
+    setLoading(false);
   };
 
   const fetchBlogs = async () => {
     setLoading(true);
-    setAllCategoriesWithDetails([]);
     try {
       const response = await apiService.get("/blogs", {});
       if (!response.status === 200) {
@@ -96,27 +91,15 @@ const Blogs = () => {
     };
     const handleEdit = () => {
       if (params.data._id !== selectedBlog._id) {
-        const findBlog = allCategoriesWithDetails.find(
-          (blog) => blog._id === params.data._id
-        );
-        if (findBlog) {
-          dispatch(setSelectedBlog(findBlog));
-        } else {
-          getBlogById(params.data._id);
-        }
+        setLoading(true);
+        getBlogById(params.data._id);
       }
       dispatch(setAddEditBlogDialog(true));
     };
     const handleView = () => {
       if (params.data._id !== selectedBlog._id) {
-        const findBlog = allCategoriesWithDetails.find(
-          (blog) => blog._id === params.data._id
-        );
-        if (findBlog) {
-          dispatch(setSelectedBlog(findBlog));
-        } else {
-          getBlogById(params.data._id);
-        }
+        setLoading(true);
+        getBlogById(params.data._id);
       }
       dispatch(setViewBlogDialog(true));
     };
