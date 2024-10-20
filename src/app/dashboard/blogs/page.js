@@ -31,6 +31,7 @@ import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import ViewBlog from "@/components/dashboard/blog/ViewBlog";
 import toast from "react-hot-toast";
 import apiService from "@/utils/api";
+import AddEditBlog from "@/components/dashboard/blog/AddEditBlog";
 
 const Blogs = () => {
   const {
@@ -235,9 +236,9 @@ const Blogs = () => {
           </Box>
         )}
       </div>
-      {loading ? (
-        <CenteredLoading />
-      ) : (
+      {loading && <CenteredLoading />}
+
+      {!loading && allBlogs.length && !addEditBlogDialog && (
         <MyTable
           columnDefs={columnDefs}
           data={allBlogs}
@@ -246,21 +247,7 @@ const Blogs = () => {
         />
       )}
 
-      {/* 
-      {loading ? (
-        <CenteredLoading />
-      ) : addEditBlogDialog ? (
-        <AddEditBlog />
-      ) : (
-        <MyTable
-          columnDefs={columnDefs}
-          data={allBlogs}
-          defaultPage={lastGridPage}
-          updateLastGridPage={updateLastGridPage}
-        />
-      )}
-     
-      */}
+      {addEditBlogDialog && <AddEditBlog />}
       {viewBlogDialog && <ViewBlog />}
 
       <Dialog
