@@ -9,7 +9,10 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  IconButton,
+  Typography,
 } from "@mui/material";
+
 import apiService from "@/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
@@ -18,13 +21,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 import {
   setAddEditBlogDialog,
-  setSelectedBlog,
   updateBlogs,
 } from "@/config/redux/blogSlice/blogSlice";
+import CloseIcon from "@mui/icons-material/Close";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
 import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
+import Login from "@/app/(auth)/login/page";
 
 const AddEditBlog = React.memo(() => {
   const { allCategories } = useSelector(categoryDetails);
@@ -71,11 +76,11 @@ const AddEditBlog = React.memo(() => {
   }, [selectedBlog]);
 
   const onClose = () => {
-    dispatch(setSelectedBlog({}));
     dispatch(setAddEditBlogDialog(false));
   };
 
   const handleImageChange = (e) => {
+    alert("hello");
     const file = e.target.files[0];
     if (file) {
       const img = new Image();
@@ -196,12 +201,12 @@ const AddEditBlog = React.memo(() => {
   ];
 
   return (
-    <Box sx={{ overflow: "hidden" }}>
-      <Box component='form' noValidate sx={{ mt: 1 }}>
+    <Box sx={{ overflow: "auto" }}>
+      <Box sx={{ mt: 1 }}>
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateColumns: "repeat(4, 1fr)",
             gap: 2,
           }}
         >
@@ -272,66 +277,77 @@ const AddEditBlog = React.memo(() => {
               <MenuItem value='inactive'>Inactive</MenuItem>
             </Select>
           </FormControl>
-          <input
-            accept='image/*'
-            style={{ display: "none" }}
-            id='raised-button-file'
-            type='file'
-            onChange={handleImageChange}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 4,
-          }}
-        >
-          {imagePreview && (
-            <Box mt={2}>
-              <img
-                src={imagePreview}
-                alt='Preview'
-                style={{ maxWidth: "100%", maxHeight: "100px" }}
+          <Box
+            sx={{
+              display: "flex",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: 1,
+            }}
+          >
+            <Box sx={{ m: 1, p: 1 }}>
+              <input
+                accept='image/*'
+                style={{ display: "none" }}
+                id='contained-button-file'
+                type='file'
+                onChange={handleImageChange}
               />
+              <Box sx={{ m: 0, position: "relative", display: "flex", gap: 2 }}>
+                {imagePreview && (
+                  <Box>
+                    <Button
+                      variant='contained'
+                      component='span'
+                      sx={{ m: 0, p: 0 }}
+                    >
+                      <img
+                        src={imagePreview}
+                        alt='Preview'
+                        style={{ maxWidth: "100%", maxHeight: "100px" }}
+                      />
+                      <IconButton
+                        sx={{
+                          position: "absolute",
+                          top: -8,
+                          right: -8,
+                          backgroundColor: "background.paper",
+                          "&:hover": { backgroundColor: "action.hover" },
+                        }}
+                        size='small'
+                        onClick={() => {
+                          setImagePreview(null);
+                          setImage(null);
+                          setRemoveImage(true);
+                        }}
+                      >
+                        <CloseIcon fontSize='small' />
+                      </IconButton>
+                    </Button>
+                  </Box>
+                )}
+                <label htmlFor='contained-button-file'>
+                  <Button
+                    variant='contained'
+                    component='span'
+                    startIcon={<CloudUploadIcon />}
+                    sx={{ mb: 2 }}
+                  >
+                    Upload
+                  </Button>
+                </label>
+              </Box>
             </Box>
-          )}
-          <Box sx={{ m: 2, p: 2 }}>
-            <label htmlFor='raised-button-file'>
-              <Button
-                variant='contained'
-                component='span'
-                sx={{ textTransform: "capitalize", m: 2 }}
-              >
-                {imagePreview ? "Change Image" : "Upload Image"}
-              </Button>
-            </label>
-            {imagePreview && (
-              <Button
-                sx={{ textTransform: "capitalize" }}
-                variant='outlined'
-                color='secondary'
-                component='span'
-                onClick={() => {
-                  setImagePreview(null);
-                  setImage(null);
-                  setRemoveImage(true);
-                }}
-              >
-                Remove Image
-              </Button>
-            )}
           </Box>
         </Box>
       </Box>
-      <Box sx={{ overflow: "auto", height: "80vh" }}>
+      <Box sx={{ overflow: "auto", height: "82vh" }}>
         <ReactQuill
           modules={modules}
           formats={formats}
           theme='snow'
           value={description}
           onChange={setDescription}
-          style={{ height: "74vh" }}
+          style={{ height: "76vh" }}
         />
         {error.description && (
           <Box sx={{ color: "error.main", mt: 2, mb: 2 }}>
@@ -339,38 +355,29 @@ const AddEditBlog = React.memo(() => {
           </Box>
         )}
       </Box>
-      <Box
+
+      <DialogActions
         sx={{
           position: "fixed",
           bottom: 0,
           left: 0,
           right: 0,
-          // ... other styles ...
+          backgroundColor: "background.paper",
         }}
       >
-        <DialogActions
-          sx={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "background.paper",
-          }}
+        <Button sx={{ textTransform: "capitalize" }} onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant='contained'
+          color='primary'
+          disabled={isLoading}
+          sx={{ textTransform: "capitalize" }}
         >
-          <Button sx={{ textTransform: "capitalize" }} onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant='contained'
-            color='primary'
-            disabled={isLoading}
-            sx={{ textTransform: "capitalize" }}
-          >
-            {isLoading ? "Loading..." : "Submit"}
-          </Button>
-        </DialogActions>
-      </Box>
+          {isLoading ? "Loading..." : "Submit"}
+        </Button>
+      </DialogActions>
     </Box>
   );
 });

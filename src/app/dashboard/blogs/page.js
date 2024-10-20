@@ -45,6 +45,7 @@ const Blogs = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+  const [allCategoriesWithDetails, setAllCategoriesWithDetails] = useState([]);
   useEffect(() => {
     if (!allBlogs.length) {
       fetchBlogs();
@@ -53,6 +54,17 @@ const Blogs = () => {
       fetchCategories(dispatch);
     }
   }, []);
+
+  const getBlogById = async (id) => {
+    const response = await apiService.get(`/blogs?id=${id}`);
+    if (response.data.success) {
+      setAllCategoriesWithDetails([
+        response.data.blog,
+        ...allCategoriesWithDetails,
+      ]);
+      dispatch(setSelectedBlog(response.data.blog));
+    }
+  };
 
   const fetchBlogs = async () => {
     setLoading(true);
@@ -82,13 +94,32 @@ const Blogs = () => {
       dispatch(setSelectedBlog(params.data));
     };
     const handleEdit = () => {
+      if (params.data._id !== selectedBlog._id) {
+        const findBlog = allCategoriesWithDetails.find(
+          (blog) => blog._id === params.data._id
+        );
+        if (findBlog) {
+          dispatch(setSelectedBlog(findBlog));
+        } else {
+          getBlogById(params.data._id);
+        }
+      }
       dispatch(setAddEditBlogDialog(true));
-      dispatch(setSelectedBlog(params.data));
     };
     const handleView = () => {
-      dispatch(setSelectedBlog(params.data));
+      if (params.data._id !== selectedBlog._id) {
+        const findBlog = allCategoriesWithDetails.find(
+          (blog) => blog._id === params.data._id
+        );
+        if (findBlog) {
+          dispatch(setSelectedBlog(findBlog));
+        } else {
+          getBlogById(params.data._id);
+        }
+      }
       dispatch(setViewBlogDialog(true));
     };
+
     return (
       <Stack direction='row' spacing={1}>
         <IconButton onClick={handleView} size='small' color='primary'>
@@ -246,8 +277,11 @@ const Blogs = () => {
           updateLastGridPage={updateLastGridPage}
         />
       )}
-
-      {addEditBlogDialog && <AddEditBlog />}
+      {addEditBlogDialog && (
+        <Box sx={{ height: "calc(100vh - 150px)", overflow: "auto" }}>
+          <AddEditBlog />
+        </Box>
+      )}
       {viewBlogDialog && <ViewBlog />}
 
       <Dialog

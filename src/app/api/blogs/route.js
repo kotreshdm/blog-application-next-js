@@ -12,11 +12,37 @@ export async function GET(req) {
   }
   await dbConnect();
   try {
+    const url = new URL(req.url);
+    const blogId = url.searchParams.get("id");
+
+    if (blogId) {
+      const blog = await Blog.findById(blogId);
+      if (!blog) {
+        return NextResponse.json(
+          { success: false, message: "Blog not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({ success: true, blog });
+    }
+
     const blogs = await Blog.find({}).sort({ createdAt: -1 });
+    const blogsWithoutDescriptionAndImage = blogs.map((blog) => ({
+      _id: blog._id,
+      name: blog.name,
+      shortDescription: blog.shortDescription,
+      category: blog.category,
+      seoDescription: blog.seoDescription,
+      seoKeyword: blog.seoKeyword,
+      status: blog.status,
+      createdAt: blog.createdAt,
+      updatedAt: blog.updatedAt,
+      slug: blog.slug,
+    }));
     return NextResponse.json({
       success: true,
       count: blogs.length,
-      blogs: blogs,
+      blogs: blogsWithoutDescriptionAndImage,
     });
   } catch (error) {
     return NextResponse.json(
