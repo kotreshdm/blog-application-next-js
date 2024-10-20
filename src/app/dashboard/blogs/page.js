@@ -1,13 +1,29 @@
 "use client";
+import MyTable from "@/components/dashboard/AgGridTable";
 import {
   setAddEditBlogDialog,
+  setLastGridPage,
   setSelectedBlog,
   updateBlogs,
 } from "@/config/redux/blogSlice/blogSlice";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteIcon from "@mui/icons-material/Delete";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -49,6 +65,122 @@ const Blogs = () => {
   const handleAddBlog = () => {
     dispatch(setAddEditBlogDialog(true));
     dispatch(setSelectedBlog({}));
+  };
+  const updateLastGridPage = (page) => {
+    dispatch(setLastGridPage(page));
+  };
+
+  const ButtonCellRenderer = (params) => {
+    const handleDelete = () => {
+      setOpenDeleteConfirmation(true);
+      dispatch(setSelectedBlog(params.data));
+    };
+    const handleEdit = () => {
+      dispatch(setAddEditBlogDialog(true));
+      dispatch(setSelectedBlog(params.data));
+    };
+    const handleView = () => {
+      dispatch(setSelectedBlog(params.data));
+      dispatch(setViewBlogDialog(true));
+    };
+    return (
+      <Stack direction='row' spacing={1}>
+        <IconButton onClick={handleView} size='small' color='primary'>
+          <VisibilityIcon />
+        </IconButton>
+        <IconButton onClick={handleEdit} size='small' color='primary'>
+          <EditIcon />
+        </IconButton>
+        <IconButton onClick={handleDelete} size='small' color='error'>
+          <DeleteIcon />
+        </IconButton>
+      </Stack>
+    );
+  };
+
+  const columnDefs = [
+    {
+      headerName: "Name",
+      valueGetter: (p) => p.data.name,
+      flex: 1,
+    },
+    {
+      field: "Description",
+      valueFormatter: (p) => p.data.description,
+      flex: 1,
+    },
+
+    {
+      field: "category",
+      valueFormatter: (p) => {
+        const category = allCategories.find(
+          (cat) => cat._id === p.data.category
+        );
+        return category ? category.name : "Unknown";
+      },
+      flex: 1,
+    },
+    {
+      field: "shortDescription",
+      valueFormatter: (p) => {
+        return p.data.shortDescription;
+      },
+      flex: 1,
+    },
+    {
+      field: "seoDescription",
+      valueFormatter: (p) => {
+        return p.data.seoDescription;
+      },
+      flex: 1,
+    },
+    {
+      field: "seoKeyword",
+      valueFormatter: (p) => {
+        return p.data.seoKeyword;
+      },
+      flex: 1,
+    },
+    {
+      field: "updatedAt",
+      valueFormatter: (p) => {
+        return new Date(p.data.updatedAt).toLocaleDateString();
+      },
+      flex: 1,
+    },
+    {
+      field: "status",
+      valueFormatter: (p) => {
+        return p.data.status === "active" ? "🟢" : "🔴";
+      },
+      flex: 1,
+    },
+
+    {
+      headerName: "Actions",
+      field: "actions",
+      cellRenderer: ButtonCellRenderer,
+      flex: 2,
+    },
+  ];
+
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await apiService.delete(`/blogs?id=${selectedBlog._id}`);
+      if (response.data.success) {
+        setOpenDeleteConfirmation(false);
+        dispatch(
+          updateBlogs(allBlogs.filter((blog) => blog._id !== selectedBlog._id))
+        );
+        dispatch(setSelectedBlog({}));
+        toast.success(response.data.message);
+      } else {
+        throw new Error(response.message || "Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error(error.message || "Failed to delete post");
+    }
   };
   return (
     <div>
@@ -98,6 +230,14 @@ const Blogs = () => {
           </Box>
         )}
       </div>
+
+      <MyTable
+        columnDefs={columnDefs}
+        data={allBlogs}
+        defaultPage={lastGridPage}
+        updateLastGridPage={updateLastGridPage}
+      />
+
       {/* 
       {loading ? (
         <CenteredLoading />
@@ -111,6 +251,9 @@ const Blogs = () => {
           updateLastGridPage={updateLastGridPage}
         />
       )}
+     
+      {viewBlogDialog && <ViewBlog />} */}
+
       <Dialog
         fullWidth
         maxWidth='sm'
@@ -142,7 +285,6 @@ const Blogs = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      {viewBlogDialog && <ViewBlog />} */}
     </div>
   );
 };
