@@ -57,7 +57,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
       dispatch(closeAllBlogsDialogs());
       dispatch(closeAllCategoriesDialogs());
     };
-  }, [darkMode]);
+  }, [darkMode, dispatch]);
   return (
     <AppBar position='sticky'>
       <Toolbar>
