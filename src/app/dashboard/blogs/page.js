@@ -4,6 +4,7 @@ import {
   setAddEditBlogDialog,
   setLastGridPage,
   setSelectedBlog,
+  setViewBlogDialog,
   updateBlogs,
 } from "@/config/redux/blogSlice/blogSlice";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
@@ -26,6 +27,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
+import ViewBlog from "@/components/dashboard/blog/ViewBlog";
 
 const Blogs = () => {
   const {
@@ -230,13 +233,16 @@ const Blogs = () => {
           </Box>
         )}
       </div>
-
-      <MyTable
-        columnDefs={columnDefs}
-        data={allBlogs}
-        defaultPage={lastGridPage}
-        updateLastGridPage={updateLastGridPage}
-      />
+      {loading ? (
+        <CenteredLoading />
+      ) : (
+        <MyTable
+          columnDefs={columnDefs}
+          data={allBlogs}
+          defaultPage={lastGridPage}
+          updateLastGridPage={updateLastGridPage}
+        />
+      )}
 
       {/* 
       {loading ? (
@@ -252,7 +258,8 @@ const Blogs = () => {
         />
       )}
      
-      {viewBlogDialog && <ViewBlog />} */}
+      */}
+      {viewBlogDialog && <ViewBlog />}
 
       <Dialog
         fullWidth
