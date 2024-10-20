@@ -22,8 +22,9 @@ import {
   updateBlogs,
 } from "@/config/redux/blogSlice/blogSlice";
 import { blogDetails } from "@/config/redux/selectors/blogSelectors";
-// import ReactQuill from "react-quill";
-// import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
 
 const AddEditBlog = React.memo(() => {
   const { allCategories } = useSelector(categoryDetails);
@@ -106,9 +107,9 @@ const AddEditBlog = React.memo(() => {
     if (!shortDescription) {
       errors.shortDescription = "Short description is required";
     }
-    // if (!description) {
-    //   errors.description = "Blog description is required";
-    // }
+    if (!description) {
+      errors.description = "Blog description is required";
+    }
     if (!category) {
       errors.category = "Blog category is required";
     }
@@ -324,14 +325,19 @@ const AddEditBlog = React.memo(() => {
         </Box>
       </Box>
       <Box sx={{ overflow: "auto", height: "80vh" }}>
-        {/* <ReactQuill
+        <ReactQuill
           modules={modules}
           formats={formats}
           theme='snow'
           value={description}
           onChange={setDescription}
           style={{ height: "74vh" }}
-        /> */}
+        />
+        {error.description && (
+          <Box sx={{ color: "error.main", mt: 2, mb: 2 }}>
+            {error.description}
+          </Box>
+        )}
       </Box>
       <Box
         sx={{
