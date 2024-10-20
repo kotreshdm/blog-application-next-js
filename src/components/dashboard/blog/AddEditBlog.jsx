@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { categoryDetails } from "@/config/redux/selectors/categorySelectors";
 import {
   setAddEditBlogDialog,
+  setSelectedBlog,
   updateBlogs,
 } from "@/config/redux/blogSlice/blogSlice";
 import CloseIcon from "@mui/icons-material/Close";
@@ -103,7 +104,12 @@ const AddEditBlog = React.memo(() => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // Remove empty <p> tags and <p> tags with only <br> from description
+    const cleanDescription = description.replace(
+      /<p>\s*(<br\s*\/?>\s*)*<\/p>|<p><\/p>/g,
+      ""
+    );
+    setDescription(cleanDescription);
     setIsLoading(true);
     const errors = {};
     if (!name) {
@@ -141,7 +147,7 @@ const AddEditBlog = React.memo(() => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("shortDescription", shortDescription);
-      formData.append("description", description);
+      formData.append("description", cleanDescription);
       formData.append("createdBy", session.user._id);
       formData.append("removeImage", removeImage);
       formData.append("category", category);
@@ -168,6 +174,7 @@ const AddEditBlog = React.memo(() => {
             )
           )
         : dispatch(updateBlogs([newPost, ...allBlogs]));
+      dispatch(setSelectedBlog({}));
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed to save blog");

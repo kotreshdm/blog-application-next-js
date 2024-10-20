@@ -68,6 +68,7 @@ const Blogs = () => {
 
   const fetchBlogs = async () => {
     setLoading(true);
+    setAllCategoriesWithDetails([]);
     try {
       const response = await apiService.get("/blogs", {});
       if (!response.status === 200) {
