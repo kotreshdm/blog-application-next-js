@@ -32,8 +32,6 @@ const BlogPage = () => {
   }, [allBlogs, category]);
 
   const filterBlogs = () => {
-    console.log("category", category);
-    console.log("allBlogs", allBlogs);
     if (category) {
       setFilteredBlogs(
         allBlogs.filter((blog) => blog.category === category._id)
