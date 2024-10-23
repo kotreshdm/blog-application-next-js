@@ -19,10 +19,20 @@ const CategoriesNavBar = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", margin: "20px 0" }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "20px 0",
+        position: "sticky",
+        top: 60,
+        backgroundColor: "background.paper",
+        zIndex: 1000,
+      }}
+    >
       {categories.map((category) => (
         <Link
-          href={`/blog?category=${category.name}`}
+          href={`/blog?category=${category.slug}`}
           key={category._id}
           style={{
             marginRight: "20px",

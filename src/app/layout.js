@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import ReactReduxProvider from "@/utils/ReactReduxProvider";
 import AppFooter from "@/components/appFooter/AppFooter";
+import "../app/globals.css";
 function getInitialDarkMode() {
   if (typeof window !== "undefined") {
     const savedMode = localStorage.getItem("theme");
@@ -27,6 +28,12 @@ export default function RootLayout({ children }) {
   useEffect(() => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);
