@@ -7,7 +7,13 @@ export async function GET(req) {
   await dbConnect();
   try {
     const categories = await Category.find({});
+    const url = new URL(req.url);
+    const slug = url.searchParams.get("slug");
 
+    if (slug) {
+      let blog = await Blog.findOne({ slug });
+      return NextResponse.json(blog);
+    }
     const blogs = await Blog.find({}).sort({ createdAt: -1 });
     const allBlogs = blogs.map((blog) => ({
       _id: blog._id,
