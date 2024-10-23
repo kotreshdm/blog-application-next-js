@@ -7,6 +7,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import React from "react";
 
 const BlogDisplay = ({ blog }) => {
@@ -41,9 +42,9 @@ const BlogDisplay = ({ blog }) => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size='small' color='primary'>
-              Read More
-            </Button>
+            <Link href={`/blog/${blog.slug}`} passHref>
+              <Button size='small'>Read More</Button>
+            </Link>
           </CardActions>
         </Box>
       </Card>
