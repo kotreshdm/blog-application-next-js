@@ -20,7 +20,7 @@ const BlogDisplay = ({ blog }) => {
       <Card sx={{ display: "flex", mb: 2 }}>
         <CardMedia
           component='img'
-          sx={{ width: "auto", height: 251, objectFit: "cover" }}
+          sx={{ width: "50%", height: "auto", objectFit: "cover" }}
           src={imageUrl}
           alt={blog.name}
         />
@@ -43,7 +43,9 @@ const BlogDisplay = ({ blog }) => {
           </CardContent>
           <CardActions>
             <Link href={`/blog/${blog.slug}`} passHref>
-              <Button size='small'>Read More</Button>
+              <Button size='small' component='a' href={`/blog/${blog.slug}`}>
+                Read More
+              </Button>
             </Link>
           </CardActions>
         </Box>

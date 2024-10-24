@@ -22,18 +22,17 @@ const CategoriesNavBar = () => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center",
-        padding: "20px 0",
+        justifyContent: "space-between",
+        padding: "10px 0",
         position: "sticky",
-        top: 60,
+        top: 63,
         backgroundColor: "background.paper",
         zIndex: 1000,
       }}
     >
-      {categories.map((category) => (
+      <Box>
         <Link
-          href={`/blog?category=${category.slug}`}
-          key={category._id}
+          href='/blog'
           style={{
             marginRight: "20px",
             color: "inherit",
@@ -42,9 +41,25 @@ const CategoriesNavBar = () => {
             cursor: "pointer",
           }}
         >
-          <span>{category.name}</span>
+          All
         </Link>
-      ))}
+        {categories.map((category) => (
+          <Link
+            href={`/blog?category=${category.slug}`}
+            key={category._id}
+            style={{
+              marginRight: "20px",
+              color: "inherit",
+              fontWeight: "bold",
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
+            <span>{category.name}</span>
+          </Link>
+        ))}
+      </Box>
+      <Box>search</Box>
     </Box>
   );
 };

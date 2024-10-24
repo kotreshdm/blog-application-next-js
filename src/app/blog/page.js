@@ -8,7 +8,10 @@ import {
   CardContent,
   CardMedia,
   Container,
+  MenuItem,
   Pagination,
+  PaginationItem,
+  Select,
   Typography,
 } from "@mui/material";
 import apiService from "@/utils/api";
@@ -36,8 +39,7 @@ const BlogPage = () => {
     const currentTime = new Date().getTime();
     if (
       allBlogs.length === 0 ||
-      currentTime - dataReloadTime > 120 * 60 * 1000 ||
-      true
+      currentTime - dataReloadTime > 120 * 60 * 1000
     ) {
       fetchBlogs();
     }
@@ -85,41 +87,98 @@ const BlogPage = () => {
   };
 
   return (
-    <Container
+    <Box
       sx={{
-        textAlign: "center",
-        marginTop: "10px",
+        padding: "0 15px 15px",
       }}
     >
       <CategoriesNavBar />
       {loading ? (
         <CenteredLoading />
       ) : (
-        <Box>
+        <Box
+          display='grid'
+          gridTemplateColumns={{
+            xs: "1fr", // 1 column for mobile (extra-small devices)
+            sm: "1fr", // 1 column for tablets (small devices)
+            md: "1fr 1fr", // 2 columns for laptops (medium devices)
+            lg: "1fr 1fr", // 2 columns for desktops (large devices)
+            xl: "1fr 1fr", // 2 columns for extra-large screens
+          }}
+          gap={3} // Gap between the items
+          sx={{ mt: 3, mb: 3 }}
+        >
           {filteredBlogs
             .slice((pageNumber - 1) * perPagePosts, pageNumber * perPagePosts)
             .map((blog, index) => (
-              <BlogDisplay key={blog._id} blog={blog} />
+              <Box key={blog._id}>
+                <BlogDisplay blog={blog} />
+              </Box>
             ))}
         </Box>
       )}
       {Math.ceil(filteredBlogs.length / perPagePosts) > 1 && (
-        <Pagination
-          sx={{
-            textAlign: "center",
-            position: "sticky",
-            display: "flex",
-            justifyContent: "center",
-            bottom: 0,
-            backgroundColor: "background.paper",
-            py: 2,
-          }}
-          count={Math.ceil(filteredBlogs.length / perPagePosts)}
-          page={pageNumber}
-          onChange={(event, value) => setPageChange(value)}
-        />
+        <>
+          <Box
+            sx={{
+              position: "sticky",
+              display: "flex",
+              justifyContent: "end",
+              bottom: 0,
+              backgroundColor: "background.paper",
+              p: 2,
+            }}
+          >
+            {Math.ceil(filteredBlogs.length / perPagePosts) > 30 && (
+              <>
+                <Typography variant='body2' sx={{ mr: 1 }}>
+                  Go to page:
+                </Typography>
+                <Select
+                  value={pageNumber}
+                  onChange={(event) => setPageChange(event.target.value)}
+                  size='small'
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 200,
+                      },
+                    },
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "right",
+                    },
+                    transformOrigin: {
+                      vertical: "bottom",
+                      horizontal: "right",
+                    },
+                  }}
+                  sx={{ padding: "0 10px", margin: "0" }}
+                >
+                  {Array.from(
+                    {
+                      length: Math.ceil(
+                        filteredBlogs.length / (perPagePosts * 5)
+                      ),
+                    },
+                    (_, index) => (
+                      <MenuItem key={(index + 1) * 5} value={(index + 1) * 5}>
+                        {(index + 1) * 5}
+                      </MenuItem>
+                    )
+                  )}
+                </Select>
+              </>
+            )}
+            <Pagination
+              count={Math.ceil(filteredBlogs.length / perPagePosts)}
+              page={pageNumber}
+              onChange={(event, value) => setPageChange(value)}
+            />
+          </Box>
+        </>
       )}
-    </Container>
+    </Box>
   );
 };
 

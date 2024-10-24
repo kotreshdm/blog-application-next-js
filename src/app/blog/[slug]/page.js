@@ -47,7 +47,7 @@ const BlogPost = () => {
           {blog.name}
         </Typography>
         <Typography variant='subtitle1' color='textSecondary' gutterBottom>
-          {/* {new Date(blog.createdAt).toLocaleDateString()} */}
+          {new Date(blog.createdAt).toLocaleDateString()}
         </Typography>
         <Box my={4}>
           <div dangerouslySetInnerHTML={{ __html: blog.description }} />
