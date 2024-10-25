@@ -24,7 +24,7 @@ import {
 import CenteredLoading from "@/components/centeredLoading/CenteredLoading";
 import CategoriesNavBar from "@/components/publicBlog/CategoriesNavBar";
 import { useSearchParams } from "next/navigation";
-import BlogDisplay from "@/components/BlogDisplay/BlogDisplay";
+import BlogDisplay from "@/components/publicBlog/BlogDisplay/BlogDisplay";
 
 const BlogPage = () => {
   const { allBlogs, loading, dataReloadTime } = useSelector(publicData);
@@ -42,9 +42,14 @@ const BlogPage = () => {
       currentTime - dataReloadTime > 120 * 60 * 1000
     ) {
       fetchBlogs();
+    } else {
+      fetchOffline();
     }
   }, []);
-
+  const fetchOffline = async () => {
+    const res = await apiService.get("/public/blogs");
+    dispatch(updateBlogs(res.data));
+  };
   useEffect(() => {
     setCategory(searchParams.get("category"));
     setPageNumber(parseInt(searchParams.get("page") || "1", 10));
