@@ -32,7 +32,7 @@ const BlogPage = () => {
   const [category, setCategory] = useState(null);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
-  const perPagePosts = 9;
+  const perPagePosts = 8;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -69,7 +69,6 @@ const BlogPage = () => {
   }, [allBlogs, category]);
 
   const setPageChange = (value) => {
-    console.log("value", value);
     const params = new URLSearchParams(searchParams);
     params.set("page", value.toString());
     window.history.replaceState(

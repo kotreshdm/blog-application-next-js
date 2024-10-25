@@ -7,6 +7,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
@@ -30,13 +31,24 @@ const BlogDisplay = ({ blog }) => {
             <Typography component='div' variant='h5'>
               {blog.name}
             </Typography>
-            <Typography
-              variant='subtitle1'
-              color='text.secondary'
-              component='div'
+            <Box
+              display='flex'
+              alignItems='center'
+              color='textSecondary'
+              mb={1}
             >
-              {blog.author}
-            </Typography>
+              <Typography variant='subtitle2' color='textSecondary'>
+                {formatDistanceToNow(new Date(blog.createdAt), {
+                  addSuffix: true,
+                })}
+              </Typography>
+              <Typography variant='subtitle2' color='textSecondary' mx={1}>
+                &bull;
+              </Typography>
+              <Typography variant='subtitle2' color='textSecondary'>
+                By {blog.createdBy}
+              </Typography>
+            </Box>
             <Typography variant='body2' color='text.secondary'>
               {blog.description}
             </Typography>
