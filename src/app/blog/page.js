@@ -48,7 +48,9 @@ const BlogPage = () => {
   }, []);
   const fetchOffline = async () => {
     const res = await apiService.get("/public/blogs");
-    dispatch(updateBlogs(res.data));
+    setTimeout(() => {
+      dispatch(updateBlogs(res.data));
+    }, 3000);
   };
   useEffect(() => {
     setCategory(searchParams.get("category"));

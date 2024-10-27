@@ -25,12 +25,8 @@ const BlogDisplay = ({ blog }) => {
           src={imageUrl}
           alt={blog.name}
         />
-
         <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <CardContent sx={{ flex: "1 0 auto" }}>
-            <Typography component='div' variant='h5'>
-              {blog.name}
-            </Typography>
             <Box
               display='flex'
               alignItems='center'
@@ -49,6 +45,9 @@ const BlogDisplay = ({ blog }) => {
                 By {blog.createdBy}
               </Typography>
             </Box>
+            <Typography component='div' variant='h5'>
+              {blog.name}
+            </Typography>
             <Typography variant='body2' color='text.secondary'>
               {blog.description}
             </Typography>

@@ -42,9 +42,6 @@ const BlogPost = () => {
   return (
     <Container>
       <Box mt={2}>
-        <Typography variant='h4' component='h4' gutterBottom>
-          {blog.name}
-        </Typography>
         <Box display='flex' alignItems='center' color='textSecondary' mb={1}>
           <Typography variant='subtitle2' color='textSecondary'>
             {formatDistanceToNow(new Date(blog.createdAt), { addSuffix: true })}
@@ -53,10 +50,12 @@ const BlogPost = () => {
             &bull;
           </Typography>
           <Typography variant='subtitle2' color='textSecondary'>
-            Created by {blog.authorName}
+            By {blog.authorName}
           </Typography>
         </Box>
-        {/* Blog description */}
+        <Typography variant='h4' component='h4' gutterBottom>
+          {blog.name}
+        </Typography>
         <Box mt={2} mb={4}>
           <div dangerouslySetInnerHTML={{ __html: blog.description }} />
         </Box>
