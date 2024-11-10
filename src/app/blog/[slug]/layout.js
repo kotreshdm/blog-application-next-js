@@ -26,6 +26,8 @@ export async function generateMetadata({ params }) {
             url: imageUrl,
             alt: blog.name,
             type: "image/jpeg",
+            width: 1200, // LinkedIn optimal width
+            height: 627, // LinkedIn optimal height
           },
         ],
         article: {
