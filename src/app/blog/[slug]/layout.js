@@ -14,19 +14,16 @@ export async function generateMetadata({ params }) {
       title: `${blog.name}`,
       description: blog.seoDescription,
       keywords: blog.seoKeyword,
-
       openGraph: {
         title: blog.name,
         type: "article",
         url: `https://techpack-desiginers-app.netlify.app/blog/${slug}`,
-        site_name: "https://techpack-desiginers-app.netlify.app/",
+        site_name: "Fashion Tech Pack Designer",
         locale: "en_US",
         description: blog.seoDescription,
         images: [
           {
             url: imageUrl,
-            width: 800,
-            height: 600,
             alt: blog.name,
             type: "image/jpeg",
           },
@@ -34,25 +31,25 @@ export async function generateMetadata({ params }) {
         article: {
           published_time: blog.publishedAt,
           modified_time: blog.updatedAt,
-          author: "https://www.facebook.com/authorPage", // Replace with author's profile link
-          publisher: "https://www.facebook.com/publisherPage", // Replace with publisher's profile link
+          author: "https://www.facebook.com/urbanpurple",
+          publisher: "http://www.facebook.com/techpacks",
         },
       },
 
       twitter: {
         card: "summary_large_image",
-        creator: "@yourTwitterHandle", // Replace with actual Twitter handle
-        site: "@yourTwitterSiteHandle", // Replace with actual Twitter site handle
+        creator: "@paromitadas",
+        site: "@paromitadas",
         title: blog.name,
         description: blog.seoDescription,
         image: imageUrl,
         label1: "Written by",
-        data1: "Author Name", // Replace with actual author name
+        data1: "Paromita",
         label2: "Est. reading time",
-        data2: `${Math.ceil(blog.wordCount / 200)} minutes`, // Estimated reading time based on word count
+        data2: `${Math.ceil(blog.wordCount / 200)} minutes`,
       },
 
-      canonical: `https://www.example.com/blog/${slug}`, // Canonical URL
+      canonical: `https://www.techpack-desiginers-app.netlify.app/blog/${slug}`,
     };
   } catch (error) {
     console.error("Error fetching metadata:", error);
@@ -60,7 +57,6 @@ export async function generateMetadata({ params }) {
     return {
       title: "Blog Not Found",
       description: "The blog you are looking for could not be found.",
-
       openGraph: {
         title: "Blog Not Found",
         description: "The blog you are looking for could not be found.",
