@@ -55,8 +55,8 @@ export default function RootLayout({ children }) {
   }
 
   return (
-    <html lang='en'>
-      <body>
+    <html lang="en">
+      <body style={{ height: "100vh", overflowY: "auto" }}>
         <ReactReduxProvider>
           <SessionProvider>
             <ThemeProvider theme={theme}>
