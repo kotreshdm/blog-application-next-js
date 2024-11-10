@@ -7,9 +7,8 @@ export async function generateMetadata({ params }) {
   try {
     const res = await apiService.get(`/public/blogs?slug=${slug}`);
     const blog = res.data;
-    const imageUrl = blog.image
-      ? `data:image/jpeg;base64,${Buffer.from(blog.image).toString("base64")}`
-      : "https://placehold.co/600x400";
+    const imageUrl =
+      "https://www.paromitadas.com/clothing-designer/wp-content/uploads/2023/12/Product-Brief-or-Style-Brief.jpg";
 
     return {
       title: `${blog.name}`,
