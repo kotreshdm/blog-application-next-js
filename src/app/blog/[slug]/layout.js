@@ -18,8 +18,8 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: blog.name,
         type: "article",
-        url: `https://www.example.com/blog/${slug}`, // Replace with actual URL
-        site_name: "Your Site Name",
+        url: `https://techpack-desiginers-app.netlify.app/blog/${slug}`,
+        site_name: "https://techpack-desiginers-app.netlify.app/",
         locale: "en_US",
         description: blog.seoDescription,
         images: [
