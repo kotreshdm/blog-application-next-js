@@ -81,7 +81,6 @@ const AddEditBlog = React.memo(() => {
   };
 
   const handleImageChange = (e) => {
-    alert("hello");
     const file = e.target.files[0];
     if (file) {
       const img = new Image();
@@ -138,6 +137,7 @@ const AddEditBlog = React.memo(() => {
       const apiEndpoint = selectedBlog?._id
         ? `/blogs?id=${selectedBlog._id}`
         : "/blogs";
+
       const method = selectedBlog?._id ? "put" : "post";
       const formData = new FormData();
       formData.append("name", name);
@@ -149,9 +149,13 @@ const AddEditBlog = React.memo(() => {
       formData.append("seoDescription", seoDescription);
       formData.append("seoKeyword", seoKeyword);
       formData.append("status", status);
+      // if(image){
+      //   await
+      // }
       if (image) {
         formData.append("image", image);
       }
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",

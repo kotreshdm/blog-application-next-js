@@ -52,14 +52,14 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    // localStorage.setItem("theme", darkMode ? "dark" : "light");
     return () => {
       dispatch(closeAllBlogsDialogs());
       dispatch(closeAllCategoriesDialogs());
     };
   }, [darkMode, dispatch]);
   return (
-    <AppBar position='sticky'>
+    <AppBar position='fixed'>
       <Toolbar>
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
           <Link
@@ -160,7 +160,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
             },
           }}
         >
-          {darkMode ? (
+          {/* {darkMode ? (
             <LightModeIcon
               sx={{
                 color: "#FFD700",
@@ -180,7 +180,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
                 },
               }}
             />
-          )}
+          )} */}
         </IconButton>
       </Toolbar>
     </AppBar>

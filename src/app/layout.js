@@ -12,7 +12,7 @@ function getInitialDarkMode() {
   if (typeof window !== "undefined") {
     const savedMode = localStorage.getItem("theme");
     if (savedMode) {
-      return savedMode === "dark";
+      return savedMode === "light";
     }
     return (
       window.matchMedia &&
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
   const [darkMode, setDarkMode] = useState(getInitialDarkMode);
 
   useEffect(() => {
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    localStorage.setItem("theme", darkMode ? "light" : "light");
   }, [darkMode]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
 
   const theme = createTheme({
     palette: {
-      mode: darkMode ? "dark" : "light",
+      mode: darkMode ? "light" : "light",
     },
   });
 
@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
   }
 
   return (
-    <html lang="en">
+    <html lang='en'>
       <body style={{ height: "100vh", overflowY: "auto" }}>
         <ReactReduxProvider>
           <SessionProvider>
