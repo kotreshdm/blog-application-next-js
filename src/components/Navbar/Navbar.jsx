@@ -59,7 +59,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
     };
   }, [darkMode, dispatch]);
   return (
-    <AppBar position='fixed'>
+    <AppBar sx={{ position: "stickey", top: "0" }}>
       <Toolbar>
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
           <Link

@@ -95,7 +95,7 @@ const BlogPage = () => {
   return (
     <Box
       sx={{
-        padding: "0 15px 15px",
+        padding: "30px 15px 15px",
       }}
     >
       <CategoriesNavBar />
