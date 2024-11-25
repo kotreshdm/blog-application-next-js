@@ -3,8 +3,6 @@ import styled from "styled-components";
 
 export const PageHeading = styled.h4`
   color: blue;
-  cursor: pointer;
-  text-decoration: none;
   text-align: center;
   padding: 25px 0;
   font-size: 22px;
