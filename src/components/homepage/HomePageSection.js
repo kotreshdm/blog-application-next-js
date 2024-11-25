@@ -50,11 +50,9 @@ export default function HomePageSection() {
       {sections.map((section, index) => (
         <Container
           key={index}
-          maxWidth="100%"
+          maxWidth='100%'
           sx={{
-            py: 2,
             bgcolor: "#FDF8F3",
-            mb: 6,
           }}
         >
           <Box
@@ -69,23 +67,21 @@ export default function HomePageSection() {
               <>
                 <Box sx={{ flex: { md: 1 } }} xs={12} md={6}>
                   <Typography
-                    variant="h2"
-                    component="h2"
+                    variant='h2'
+                    component='h2'
                     sx={{
                       fontSize: { xs: "2.5rem", md: "3.5rem" },
                       fontWeight: 700,
                       color: "#1A1A1A",
-                      mb: 3,
                     }}
                   >
                     {section.title}
                   </Typography>
 
                   <Typography
-                    variant="body1"
+                    variant='body1'
                     sx={{
                       color: "#666",
-                      mb: 4,
                       fontSize: "1.1rem",
                       maxWidth: "98%",
                       lineHeight: 1.6,
@@ -125,7 +121,7 @@ export default function HomePageSection() {
                     src={section.img}
                     alt={section.title}
                     fill
-                    objectFit="cover"
+                    objectFit='cover'
                     style={{ objectFit: "cover" }}
                   />
                 </Box>
@@ -147,7 +143,7 @@ export default function HomePageSection() {
                     src={section.img}
                     alt={section.title}
                     fill
-                    objectFit="cover"
+                    objectFit='cover'
                     // style={{ objectFit: "cover" }}
                   />
                 </Box>
@@ -155,20 +151,19 @@ export default function HomePageSection() {
                 {/* Right content */}
                 <Box sx={{ flex: { md: 1 }, ml: 2 }} xs={12} md={6}>
                   <Typography
-                    variant="h2"
-                    component="h2"
+                    variant='h2'
+                    component='h2'
                     sx={{
                       fontSize: { xs: "2.5rem", md: "3.5rem" },
                       fontWeight: 700,
                       color: "#1A1A1A",
-                      mb: 3,
                     }}
                   >
                     {section.title}
                   </Typography>
 
                   <Typography
-                    variant="body1"
+                    variant='body1'
                     sx={{
                       color: "#666",
                       mb: 4,

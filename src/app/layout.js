@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import ReactReduxProvider from "@/utils/ReactReduxProvider";
 import AppFooter from "@/components/appFooter/AppFooter";
 import "../app/globals.css";
+import { Box } from "@mui/material";
 function getInitialDarkMode() {
   if (typeof window !== "undefined") {
     const savedMode = localStorage.getItem("theme");
@@ -56,7 +57,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang='en'>
-      <body style={{ height: "100vh", overflowY: "auto" }}>
+      <body style={{ height: "100vh", overflowY: "auto", paddingRight: 0 }}>
         <ReactReduxProvider>
           <SessionProvider>
             <ThemeProvider theme={theme}>
@@ -73,7 +74,7 @@ export default function RootLayout({ children }) {
               />
               <CssBaseline />
               <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-              {children}
+              <Box style={{ marginTop: "42px" }}>{children}</Box>
               <AppFooter />
             </ThemeProvider>
           </SessionProvider>

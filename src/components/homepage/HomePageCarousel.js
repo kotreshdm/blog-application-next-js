@@ -42,7 +42,7 @@ export default function HomePageCarousel() {
   ];
 
   return (
-    <Carousel sx={{ height: { xs: "auto", md: "600px" }, marginTop: "20px" }}>
+    <Carousel sx={{ height: { xs: "auto", md: "600px" } }}>
       {items.map((item, index) => (
         <Paper
           key={index}
@@ -72,13 +72,13 @@ export default function HomePageCarousel() {
                 zIndex: 1,
               }}
             >
-              <Typography variant="h4" component="h2" gutterBottom>
+              <Typography variant='h4' component='h2' gutterBottom>
                 {item.title}
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant='body1' paragraph>
                 {item.description}
               </Typography>
-              <Button variant="contained" color="primary">
+              <Button variant='contained' color='primary'>
                 {item.buttonText}
               </Button>
             </Grid>
@@ -109,8 +109,8 @@ export default function HomePageCarousel() {
                 <Image
                   src={item.image}
                   alt={item.title}
-                  layout="fill"
-                  objectFit="cover"
+                  layout='fill'
+                  objectFit='cover'
                 />
               </Box>
             </Grid>

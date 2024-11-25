@@ -7,17 +7,14 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { keyframes } from "@mui/system";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-import { toTitleCase } from "@/utils/helperFunctions/toTitleCase";
 import { useDispatch } from "react-redux";
 import { closeAllBlogsDialogs } from "@/config/redux/blogSlice/blogSlice";
 import { closeAllCategoriesDialogs } from "@/config/redux/categorySlice/categorySlice";
 import Image from "next/image";
-import logo from "@/public/images/logo.png";
+import logo from "@/public/images/logo.webp";
 
 const sunRotate = keyframes`
   from {
@@ -59,8 +56,8 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
     };
   }, [darkMode, dispatch]);
   return (
-    <AppBar sx={{ position: "stickey", top: "0" }}>
-      <Toolbar>
+    <AppBar className='app-header'>
+      <Toolbar style={{ minHeight: "42px", backgroundColor: "gray" }}>
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
           <Link
             style={{
