@@ -38,7 +38,8 @@
     "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
