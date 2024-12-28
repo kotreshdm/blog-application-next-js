@@ -32,7 +32,7 @@ const services = [
       "Unique collection designs with distinct brand identity. Our technical designers create detailed fashion flats and sketches based on your vision, including front, back, and side views with color specifications.",
   },
   {
-    title: "Tech Pack Design Service",
+    title: "Tech Pack Design Service ",
     icon: <FileEditIcon />,
     description:
       "Comprehensive technical drawings with detailed garment specifications. Our tech packs include fabric, trims, color, and measurement specifications - everything manufacturers need for precise production.",
