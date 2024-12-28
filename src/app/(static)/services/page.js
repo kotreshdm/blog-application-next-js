@@ -1,133 +1,148 @@
+"use client";
+
 import React from "react";
 import {
   Box,
-  Typography,
-  Grid,
   Card,
   CardContent,
+  Typography,
   Button,
+  Container,
+  Grid,
 } from "@mui/material";
-import Link from "next/link";
+import FlaskRoundIcon from "@mui/icons-material/Science";
+import PencilIcon from "@mui/icons-material/Edit";
+import FileEditIcon from "@mui/icons-material/Description";
+import TargetIcon from "@mui/icons-material/GpsFixed";
+import ScissorsIcon from "@mui/icons-material/ContentCut";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import ArrowRightIcon from "@mui/icons-material/ArrowForward";
 
-// Services Array
 const services = [
   {
     title: "Concept Development",
+    icon: <FlaskRoundIcon />,
     description:
-      "When you have a raw idea and need help developing it into a viable product, our professional team can help you give shape to your concept that your customers will love.",
+      "Transform your raw ideas into viable fashion concepts. Our professional team guides you through silhouette development and design refinement, ensuring your vision becomes a market-ready product.",
   },
   {
     title: "Apparel Design",
+    icon: <PencilIcon />,
     description:
-      "Our collection line sheets are unique and complement the brand identity. Technical designers prepare fashion flat sketches based on your brand concept, ensuring your vision is achieved.",
+      "Unique collection designs with distinct brand identity. Our technical designers create detailed fashion flats and sketches based on your vision, including front, back, and side views with color specifications.",
   },
   {
     title: "Tech Pack Design Service",
+    icon: <FileEditIcon />,
     description:
-      "We create detailed production-ready tech packs, including garment specifications, fabric details, trims, color, and measurement spec sheets, which are essential for efficient manufacturing.",
+      "Comprehensive technical drawings with detailed garment specifications. Our tech packs include fabric, trims, color, and measurement specifications - everything manufacturers need for precise production.",
   },
   {
     title: "Sample Development",
+    icon: <TargetIcon />,
     description:
-      "We offer sample development services to create a 100% accurate garment style. Our process ensures you have a precise sample to reproduce consistently during production.",
+      "Perfect your designs with our precise sample development process. We ensure 100% accuracy in reproducing your garment style, making your manufacturing journey smoother and more efficient.",
   },
   {
     title: "Clothing Manufacturing",
+    icon: <ScissorsIcon />,
     description:
-      "With our in-house manufacturing unit, we provide end-to-end manufacturing services, including shipping, allowing brands to focus on marketing while we handle production and logistics.",
+      "End-to-end clothing manufacturing and shipping services with our in-house production unit. We specialize in serving global brands with efficient backend manufacturing and logistics.",
   },
   {
     title: "Apparel Branding",
+    icon: <TrendingUpIcon />,
     description:
-      "We help turn your raw ideas into meaningful concepts that resonate with consumers, ensuring your brand is well-positioned for success in the market.",
+      "Strategic brand development focused on consumer acceptance and market impact. We help build meaningful concepts that resonate with your target audience and drive market success.",
   },
 ];
 
-const ServicesPage = () => {
+export default function ServicesPage() {
   return (
-    <Box sx={{ padding: 4, backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
-      {/* Header Section */}
-      <Box sx={{ marginBottom: 4, textAlign: "justify" }}>
-        <Typography variant='h4' gutterBottom>
-          Fashion Design and Development Services
-        </Typography>
-        <Typography variant='h6' color='text.secondary' sx={{ p: 2 }}>
-          Bringing a successful fashion brand to market is no simple task.
-          Developing a sketch into a finished product can be long, expensive and
-          frustrating. You need experienced technical fashion consultant to
-          consult and assist you. We can help you bring your ideas to a
-          successful fashion brand. We guide you in developing a sketch in to a
-          finish product. It takes combination of interdependent factors to
-          bring success to your brand. So, you need right professional to work
-          on your ideas. We can help you to turn your concept into a your dream
-          product!
-        </Typography>
-        <Typography variant='h6' color='text.secondary' sx={{ p: 2 }}>
-          At Fashion Studio Urban Purple, We have fashion technical designers,
-          Pattern Makers and a complete sampling unit. Here we insure that a
-          team specialist in your product category develop your product. We
-          specialize in womenswear, menswear, kidswear, activewear and lingerie.
-          We have specialist tech pack designers and pattern makers for the
-          above category working with us. Below is our complete range of fashion
-          development services.
-        </Typography>
-        <Typography variant='h6' color='text.secondary' sx={{ p: 2 }}>
-          We not only give advise and leave you on your way but also support you
-          in every step. Our core value is to guide you on the business from
-          beginning to the end of a complete life cycle. We offer service from
-          Concept to customer. We are one step solution for your business need
-          starting from concept to customer. An one step shop for all your
-          product needs so that you can focus on selling and building your
-          business. By outsourcing design, tech pack and production service to
-          Urban Purple, you can reduce your operating cost by an average of 30%
-          net and you can expand your product offering.
-        </Typography>
-      </Box>
-
-      <Grid container spacing={4}>
-        {services.map((service, index) => (
-          <Grid item xs={12} md={4} key={index}>
-            <Card>
-              <CardContent>
-                <Typography variant='h6' gutterBottom>
-                  {service.title}
-                </Typography>
-                <Typography variant='body2' color='text.secondary'>
-                  {service.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      <Box
-        sx={{ padding: 4, backgroundColor: "#f1f1f1", borderRadius: 2, mt: 4 }}
-      >
-        <Grid container alignItems='center' spacing={2}>
-          {/* Left Side Content */}
-          <Grid item xs={12} md={8}>
-            <Typography variant='body1'>
-              Interested in working with us? Or got a question? Maybe just want
-              to say hello?
-            </Typography>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            md={4}
-            sx={{ textAlign: { xs: "center", md: "right" } }}
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+      <Container sx={{ py: 4 }}>
+        {/* Hero Section */}
+        <Box sx={{ textAlign: "center", mb: 8 }}>
+          <Typography
+            variant="h1"
+            component="h1"
+            gutterBottom
+            sx={{ fontSize: "28px", mb: 4, fontWeight: 600 }}
           >
-            <Link href='/contact'>
-              <Button variant='contained' color='primary' size='large'>
-                Contact Us
-              </Button>
-            </Link>
-          </Grid>
+            Fashion Design and Development Services
+          </Typography>
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ maxWidth: "800px", mx: "auto" }}
+          >
+            Bringing your fashion brand to market with expert technical design,
+            pattern making, and complete sampling solutions. Reduce operating
+            costs by 30% while expanding your product offering.
+          </Typography>
+        </Box>
+
+        {/* Services Grid */}
+        <Grid container spacing={4}>
+          {services.map((service, index) => (
+            <Grid item xs={12} md={6} lg={4} key={index}>
+              <Card
+                sx={{
+                  height: "100%",
+                  border: "2px solid",
+                  borderColor: "divider",
+                  transition: "border-color 0.3s ease",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ mb: 2, color: "primary.main" }}>
+                    {React.cloneElement(service.icon, { sx: { fontSize: 40 } })}
+                  </Box>
+                  <Typography variant="h5" component="h3" gutterBottom>
+                    {service.title}
+                  </Typography>
+                  <Typography color="text.secondary" paragraph>
+                    {service.description}
+                  </Typography>
+                  <Button
+                    variant="text"
+                    endIcon={<ArrowRightIcon />}
+                    sx={{
+                      "& .MuiSvgIcon-root": {
+                        transition: "transform 0.2s ease",
+                      },
+                      "&:hover .MuiSvgIcon-root": {
+                        transform: "translateX(4px)",
+                      },
+                    }}
+                  >
+                    Learn More
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
-      </Box>
+
+        {/* CTA Section */}
+        <Box sx={{ mt: 8, textAlign: "center" }}>
+          <Button
+            variant="contained"
+            size="large"
+            endIcon={<ArrowRightIcon />}
+            sx={{ fontSize: "1.125rem" }}
+          >
+            Contact Us Now
+          </Button>
+          <Typography color="text.secondary" sx={{ mt: 2 }}>
+            Ready to bring your fashion ideas to life? Let's talk about your
+            project.
+          </Typography>
+        </Box>
+      </Container>
     </Box>
   );
-};
-
-export default ServicesPage;
+}
