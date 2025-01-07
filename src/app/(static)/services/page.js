@@ -135,7 +135,7 @@ export default function ServicesPage() {
             endIcon={<ArrowRightIcon />}
             sx={{ fontSize: "1.125rem" }}
           >
-            Contact Us Now
+            Contact Us
           </Button>
           <Typography color="text.secondary" sx={{ mt: 2 }}>
             Ready to bring your fashion ideas to life? Let&apos;s talk about your
