@@ -138,7 +138,7 @@ export default function ServicesPage() {
             Contact Us Now
           </Button>
           <Typography color="text.secondary" sx={{ mt: 2 }}>
-            Ready to bring your fashion ideas to life? Let's talk about your
+            Ready to bring your fashion ideas to life? Let&apos;s talk about your
             project.
           </Typography>
         </Box>
