@@ -1,11 +1,7 @@
-"use client";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 export default function NotFound() {
-  const router = useRouter();
-
   return (
     <div className='flex flex-col items-center justify-center min-h-screen text-center px-4'>
       {/* Warning Icon */}
