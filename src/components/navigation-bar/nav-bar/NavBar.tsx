@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import DarkModeToggle from "./DarkModeToggle";
+import DarkModeToggle from "../darkModeToggle/DarkModeToggle";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -17,10 +17,26 @@ const navLinks = [
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <nav className='bg-gray-800 sticky top-0 z-50'>
-      <div className='mx-auto max-w-7xl px-2 sm:px-6 lg:px-8'>
+      <div className='mx-auto max-w-12xl px-2 sm:px-2 lg:px-2'>
         <div className='relative flex h-16 items-center justify-between'>
           {/* Mobile Menu Button */}
           <div className='absolute inset-y-0 left-0 flex items-center sm:hidden'>
@@ -83,7 +99,7 @@ export default function NavBar() {
           </div>
 
           {/* User Profile Dropdown */}
-          <div className='relative'>
+          <div className='relative' ref={dropdownRef}>
             <button
               type='button'
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
