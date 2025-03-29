@@ -1,19 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import DarkModeToggle from "../darkModeToggle/DarkModeToggle";
 import { useSession } from "next-auth/react";
-
-const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "About Us", href: "/about" },
-  { name: "Services", href: "/services" },
-  { name: "Tech Pack", href: "/tech-pack" },
-  { name: "Portfolio", href: "/portfolio" },
-  { name: "Manufacturing", href: "/manufacturing" },
-  { name: "Blog", href: "/blog" },
-  { name: "Contact Us", href: "/contact" },
-];
 
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
