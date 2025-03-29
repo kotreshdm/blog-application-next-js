@@ -1,5 +1,5 @@
 import UserInfo from "@/components/dashboard/user-info/UserInfo";
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardLayout({
   children,
