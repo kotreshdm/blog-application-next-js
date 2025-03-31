@@ -7,7 +7,7 @@ export default function DashboardPage() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["dashboardData"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/dashboard-data");
+      const response = await axiosInstance.get("/dashboard/dashboard-data");
       return response.data;
     },
     enabled: true,

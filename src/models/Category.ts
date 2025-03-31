@@ -20,7 +20,7 @@ const CategorySchema = new mongoose.Schema(
     },
     createdBy: {
       type: String,
-      required: true,
+      // required: true,
     },
     updatedBy: {
       type: String,
