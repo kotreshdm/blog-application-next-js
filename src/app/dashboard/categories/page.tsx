@@ -20,7 +20,7 @@ export default function Categories() {
     null
   );
 
-  const { data, isLoading, isError, refetch } = useQuery<Category[]>({
+  const { data, isLoading, isError } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await axiosInstance.get<Category[]>(
@@ -197,7 +197,7 @@ export default function Categories() {
             Confirm Delete
           </h2>
           <p className='text-center text-gray-700'>
-            Are you sure you want to delete "{selectedCategory.name}"?
+            Are you sure you want to delete &#34;{selectedCategory.name}&#34;?
           </p>
           <div className='mt-4 flex justify-center space-x-2'>
             <button

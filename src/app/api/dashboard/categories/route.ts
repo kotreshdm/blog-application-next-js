@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Categories from "@/models/Category";
-import { getSession } from "next-auth/react";
+// import { getSession } from "next-auth/react";
 export async function GET() {
   try {
     await dbConnect();
