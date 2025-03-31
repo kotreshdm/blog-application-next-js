@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 const POSTS_PER_PAGE = 20;
 export default function Posts() {
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
