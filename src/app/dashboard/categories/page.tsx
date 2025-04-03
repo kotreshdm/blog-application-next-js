@@ -3,6 +3,8 @@ import { useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from "@/components/modal/Modal";
+import toast from "react-hot-toast";
+import Category from "@/models/Category";
 
 interface Category {
   id: number;
@@ -44,22 +46,39 @@ export default function Categories() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      toast.success(`Category created successfully!!! `);
       setModalType(null);
+    },
+    onError: (error: any) => {
+      console.error("Error creating category:", error.response.data);
+      toast.error(
+        `Failed to create: ${
+          error.response.data.message || "An unknown error occurred."
+        }`
+      );
     },
   });
 
   // Delete Mutation
-  // const deleteMutation = useMutation(
-  //   async (id: string) => {
-  //     return axiosInstance.delete(`/dashboard/categories/${id}`);
-  //   },
-  //   {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries(["categories"]);
-  //       setModalType(null);
-  //     },
-  //   }
-  // );
+  const deleteMutation = useMutation<void, Error, number>({
+    mutationFn: async (id: number) => {
+      await axiosInstance.delete(`/dashboard/categories/${id}`);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      setModalType(null);
+      toast.success(`${selectedCategory?.name} deleted successfully!`);
+    },
+    onError: (error: any) => {
+      console.error("Error deleting category:", error);
+      toast.error(
+        `Failed to delete category: ${
+          error.message || "An unknown error occurred."
+        }`
+      );
+    },
+  });
 
   function handleAdd() {
     setSelectedCategory(null);
@@ -75,7 +94,6 @@ export default function Categories() {
     setSelectedCategory(category);
     setModalType("delete");
   }
-
   return (
     <div className='p-6'>
       <div className='flex justify-between items-center mb-6'>
@@ -207,7 +225,7 @@ export default function Categories() {
               Cancel
             </button>
             <button
-              //  onClick={() => deleteMutation.mutate(selectedCategory.id)}
+              onClick={() => deleteMutation.mutate(selectedCategory._id)}
               className='px-4 py-2 bg-red-500 text-white rounded-md'
             >
               Delete

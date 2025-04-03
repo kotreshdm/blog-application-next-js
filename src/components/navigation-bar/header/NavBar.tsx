@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { status } = useSession();
-
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about" },

@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Categories from "@/models/Category";
-// import { getSession } from "next-auth/react";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/utils/authOptions";
+
 export async function GET() {
   try {
     await dbConnect();
+
     const categories = await Categories.find().sort({ createdAt: -1 });
 
     return NextResponse.json(categories, { status: 200 });
@@ -19,32 +23,39 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    // const session = await getSession({ req });
-    // if (!session) {
-    //   return NextResponse.json(
-    //     { error: "User not authenticated" },
-    //     { status: 401 }
-    //   );
-    // }
+    const session = await getServerSession(authOptions);
 
-    // const createdBy = session.user.id;
+    if (!session) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    const createdBy = session.user.id;
     await dbConnect();
 
     // Get the data from the request body
     const { name } = await req.json();
 
     // Check if name is provided
-    if (!name) {
+    if (name) {
       return NextResponse.json(
         { error: "Category name is required" },
         { status: 400 }
       );
     }
 
+    if (name.length > 50) {
+      return NextResponse.json(
+        { error: "Category name is not more then 50 char" },
+        { status: 400 }
+      );
+    }
     // Create a new category
     const newCategory = new Categories({
       name,
-      createdBy: "",
+      createdBy,
     });
 
     // Save to the database

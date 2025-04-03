@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          console.error("Missing email or password"); // 🔹 Log error
+          console.error("Missing email or password");
           throw new Error("Email and password are required");
         }
 
@@ -40,17 +40,17 @@ export const authOptions: NextAuthOptions = {
           credentials.password,
           user.password
         );
-        console.log("Password Match:", isMatch); // 🔹 Log password comparison result
+        console.log("Password Match:", isMatch);
 
         if (!isMatch) {
-          console.error("Invalid password"); // 🔹 Log incorrect password
+          console.error("Invalid password");
           throw new Error("Invalid email or password");
         }
 
-        console.log("Login successful for:", user.email); // 🔹 Log successful login
+        console.log("Login successful for:", user.email);
 
         return {
-          id: user._id.toString(),
+          id: user._id.toString(), // Ensure it's a string
           name: user.name,
           email: user.email,
           image: user.image,
@@ -61,8 +61,8 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log("JWT callback - User authenticated:", user.email); // 🔹 Log JWT user
-        token.id = user.id;
+        console.log("JWT callback - User authenticated:", user.email);
+        token.id = "userid"; // ✅ Store user ID in token
         token.name = user.name;
         token.email = user.email;
         token.image = user.image;
@@ -70,10 +70,12 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log("Session callback - User session:", token.email); // 🔹 Log session user
+      console.log("Session callback - User session:", token.email);
       if (session.user) {
+        session.user.id = token.id;
         session.user.email = token.email;
         session.user.name = token.name;
+        // session.user.image = token.image;
       }
       return session;
     },
