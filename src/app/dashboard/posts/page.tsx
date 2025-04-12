@@ -99,7 +99,7 @@ export default function Posts() {
     }
     const debounceTimeout = setTimeout(() => {
       setFilteredData(
-        data?.filter((post: any) =>
+        data?.filter((post: Posts) =>
           post.name.toLowerCase().includes(search.toLowerCase())
         ) || []
       );
