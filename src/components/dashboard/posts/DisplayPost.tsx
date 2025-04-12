@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 
 export default function DisplayPost({
   data,
   handleEdit,
   handleDelete,
 }: {
-  data: { id: string; name: string }[] | any[];
+  data: { id: string; name: string }[];
   handleEdit: (post: { id: string; name: string }) => void;
   handleDelete: (post: { id: string; name: string }) => void;
 }) {

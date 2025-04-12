@@ -42,7 +42,7 @@ export default function Posts() {
         return axiosInstance.post(`/dashboard/posts`, post);
       }
     },
-    onSuccess: (response: any) => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       setModalType(null);
       setSelectedPost(null);
@@ -52,7 +52,7 @@ export default function Posts() {
         toast.success(response.data.message || `Post created successfully!!! `);
       }
     },
-    onError: (error: any) => {
+    onError: (error) => {
       console.error("Error:", error);
       toast.error(error.response.data.error || "Something went wrong!!! ");
     },
@@ -63,24 +63,24 @@ export default function Posts() {
     mutationFn: async (id: string | number) => {
       return axiosInstance.delete(`/dashboard/posts/${id}`);
     },
-    onSuccess: (response: any) => {
+    onSuccess: (response) => {
       setModalType(null);
       setSelectedPost(null);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success(response.data.message || `Post deleted successfully!!! `);
     },
-    onError: (error: any) => {
+    onError: (error) => {
       console.error("Error:", error);
       toast.error(error.response.data.error || "Something went wrong!!! ");
     },
   });
 
-  const handleEdit = (post: any) => {
+  const handleEdit = (post: Posts) => {
     console.log("Edit post:", post);
     setModalType("edit");
     setSelectedPost(post);
   };
-  const handleDelete = (post: any) => {
+  const handleDelete = (post: Posts) => {
     setModalType("delete");
     setSelectedPost(post);
   };
