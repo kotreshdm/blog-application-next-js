@@ -181,7 +181,6 @@ export default function Categories() {
           <h2 className='text-xl font-semibold text-gray-900'>
             {modalType === "edit" ? "Edit Category" : "Add New Category"}
           </h2>
-          <h2>{JSON.stringify(selectedCategory)}</h2>
           <form
             onSubmit={(e) => {
               e.preventDefault();

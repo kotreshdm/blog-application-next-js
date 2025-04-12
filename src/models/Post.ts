@@ -5,7 +5,7 @@ const BlogSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please provide a category name"],
+      required: [true, "Please provide a blog title"],
       unique: true,
       trim: true,
       maxlength: [200, "Name cannot be more than 200 characters"],
@@ -18,19 +18,15 @@ const BlogSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      required: true,
     },
     shortDescription: {
       type: String,
-      required: true,
     },
     seoDescription: {
       type: String,
-      required: true,
     },
     seoKeyword: {
       type: String,
-      required: true,
     },
     description: {
       type: String,
@@ -46,10 +42,10 @@ const BlogSchema = new mongoose.Schema(
       type: Buffer,
       contentType: String,
     },
-    status: {
+    blogStatus: {
       type: String,
       enum: ["active", "inactive"],
-      default: "active",
+      default: "inactive",
     },
   },
   {
