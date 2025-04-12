@@ -5,12 +5,10 @@ export default function DisplayPost({
   handleEdit,
   handleDelete,
 }: {
-  data: any;
-  handleEdit: (post: any) => void;
-  handleDelete: (post: any) => void;
+  data: { id: string; name: string }[] | any[];
+  handleEdit: (post: { id: string; name: string }) => void;
+  handleDelete: (post: { id: string; name: string }) => void;
 }) {
-  const [search, setSearch] = useState("");
-
   return (
     <table className='table-auto w-full border-collapse border border-gray-300'>
       <thead>

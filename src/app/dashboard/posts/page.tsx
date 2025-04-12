@@ -3,7 +3,6 @@ import DisplayPost from "@/components/dashboard/posts/DisplayPost";
 import Modal from "@/components/modal/Modal";
 import axiosInstance from "@/utils/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { log } from "console";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
