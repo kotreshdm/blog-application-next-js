@@ -60,7 +60,7 @@ export default function Categories() {
       }
       setModalType(null);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error(
         `Failed to create: ${
           error.response.data.error || "An unknown error occurred."
@@ -82,7 +82,7 @@ export default function Categories() {
         `Category deleted  successfully....! ${selectedCategory?.name} `
       );
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error("Error deleting category:", error);
       toast.error(
         `Failed to delete category: ${
