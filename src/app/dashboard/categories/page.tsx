@@ -35,7 +35,10 @@ export default function Categories() {
   // Add & Edit Mutation
   const mutation = useMutation({
     mutationFn: async (category: Partial<Category>) => {
+      console.log(category);
+
       if (modalType === "edit" && category.id) {
+        console.log("Editing category:");
         return axiosInstance.put(
           `/dashboard/categories/${category.id}`,
           category
@@ -44,16 +47,23 @@ export default function Categories() {
         return axiosInstance.post(`/dashboard/categories`, category);
       }
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      toast.success(`Category created successfully!!! `);
+      if (modalType === "edit") {
+        toast.success(
+          response.data.message || `Category updated successfully!!! `
+        );
+      } else {
+        toast.success(
+          response.data.message || `Category created successfully!!! `
+        );
+      }
       setModalType(null);
     },
     onError: (error: any) => {
-      console.error("Error creating category:", error.response.data);
       toast.error(
         `Failed to create: ${
-          error.response.data.message || "An unknown error occurred."
+          error.response.data.error || "An unknown error occurred."
         }`
       );
     },
@@ -68,7 +78,9 @@ export default function Categories() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       setModalType(null);
-      toast.success(`${selectedCategory?.name} deleted successfully!`);
+      toast.success(
+        `Category deleted  successfully....! ${selectedCategory?.name} `
+      );
     },
     onError: (error: any) => {
       console.error("Error deleting category:", error);
@@ -169,12 +181,13 @@ export default function Categories() {
           <h2 className='text-xl font-semibold text-gray-900'>
             {modalType === "edit" ? "Edit Category" : "Add New Category"}
           </h2>
+          <h2>{JSON.stringify(selectedCategory)}</h2>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
               const category: Partial<Category> = {
-                id: selectedCategory?.id,
+                id: selectedCategory?._id,
                 name: formData.get("name") as string,
               };
               mutation.mutate(category);

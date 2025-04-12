@@ -33,13 +33,11 @@ export async function POST(req: Request) {
     }
 
     const createdBy = session.user.id;
+
     await dbConnect();
 
-    // Get the data from the request body
     const { name } = await req.json();
-
-    // Check if name is provided
-    if (name) {
+    if (!name) {
       return NextResponse.json(
         { error: "Category name is required" },
         { status: 400 }
@@ -52,6 +50,16 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // Check if category already exists
+    const existingCategory = await Categories.findOne({ name });
+    if (existingCategory) {
+      return NextResponse.json(
+        { error: "Category already exists" },
+        { status: 400 }
+      );
+    }
+
     // Create a new category
     const newCategory = new Categories({
       name,
