@@ -1,11 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Categories from "@/models/Category";
 import mongoose from "mongoose";
-export async function DELETE(params: { id: string }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     await dbConnect();
-    const { id } = await params;
+    const { id } = await context.params;
 
     // Validate ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
