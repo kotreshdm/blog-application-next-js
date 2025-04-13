@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Categories from "@/models/Category";
 import mongoose from "mongoose";
-export async function DELETE(params) {
+export async function DELETE(params: { id: string }) {
   try {
     await dbConnect();
     const { id } = await params;
@@ -40,7 +40,7 @@ export async function DELETE(params) {
   }
 }
 
-export async function PUT(request, params) {
+export async function PUT(request: Request, params: { id: string }) {
   try {
     await dbConnect();
     const { id } = await params;
