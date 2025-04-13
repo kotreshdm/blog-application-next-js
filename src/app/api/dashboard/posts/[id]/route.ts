@@ -3,10 +3,7 @@ import dbConnect from "@/utils/dbConnect";
 import Post from "@/models/Post";
 import mongoose from "mongoose";
 import slugify from "slugify";
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(params) {
   try {
     await dbConnect();
     const { id } = await params;
@@ -43,10 +40,7 @@ export async function DELETE(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request, params) {
   try {
     await dbConnect();
     const { id } = await params;
