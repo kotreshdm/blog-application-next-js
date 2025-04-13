@@ -35,14 +35,8 @@ export default function Categories() {
   // Add & Edit Mutation
   const mutation = useMutation({
     mutationFn: async (category: Partial<Category>) => {
-      console.log(category);
-
       if (modalType === "edit" && category.id) {
-        console.log("Editing category:");
-        return axiosInstance.put(
-          `/dashboard/categories/${category.id}`,
-          category
-        );
+        return axiosInstance.put(`/dashboard/categories`, category);
       } else {
         return axiosInstance.post(`/dashboard/categories`, category);
       }
@@ -60,10 +54,10 @@ export default function Categories() {
       }
       setModalType(null);
     },
-    onError: (error: unknown) => {
+    onError: (error) => {
       toast.error(
         `Failed to create: ${
-          error.response.data.error || "An unknown error occurred."
+          error.response?.data?.error || "An unknown error occurred."
         }`
       );
     },
@@ -72,7 +66,7 @@ export default function Categories() {
   // Delete Mutation
   const deleteMutation = useMutation<void, Error, number>({
     mutationFn: async (id: number) => {
-      await axiosInstance.delete(`/dashboard/categories/${id}`);
+      await axiosInstance.delete(`/dashboard/categories`, { data: { id } });
     },
 
     onSuccess: () => {
