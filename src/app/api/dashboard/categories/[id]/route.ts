@@ -40,7 +40,10 @@ export async function DELETE(params: { id: string }) {
   }
 }
 
-export async function PUT(request: Request, params: { id: string }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     await dbConnect();
     const { id } = await params;
