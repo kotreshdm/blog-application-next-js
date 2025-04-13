@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Categories from "@/models/Category";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import Post from "@/models/Post";
