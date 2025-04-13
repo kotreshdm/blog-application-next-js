@@ -55,6 +55,7 @@ export default function Categories() {
       setModalType(null);
     },
     onError: (error) => {
+      console.error("Error:", error);
       toast.error(`Failed to create: ${"An unknown error occurred."}`);
     },
   });
