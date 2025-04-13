@@ -37,7 +37,7 @@ export default function Posts() {
     mutationFn: async (post: Partial<Posts>) => {
       if (modalType === "edit" && post.id) {
         console.log("Post data:", post, modalType);
-        return axiosInstance.put(`/dashboard/posts/${post.id}`, post);
+        return axiosInstance.patch(`/dashboard/posts`, post);
       } else {
         return axiosInstance.post(`/dashboard/posts`, post);
       }
@@ -61,7 +61,7 @@ export default function Posts() {
   // Delete Mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
-      return axiosInstance.delete(`/dashboard/posts/${id}`);
+      return axiosInstance.delete(`/dashboard/posts/`, { data: { id } });
     },
     onSuccess: (response) => {
       setModalType(null);

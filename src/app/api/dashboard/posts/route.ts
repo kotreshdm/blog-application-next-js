@@ -84,3 +84,89 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Blog ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
+
+    // Check if category exists
+    const existingBlog = await Post.findById(id);
+    if (!existingBlog) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // Delete the category
+    await Post.findByIdAndDelete(id);
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    return NextResponse.json(
+      { error: "Failed to delete blog" },
+      { status: 500 }
+    );
+  }
+}
+export async function PATCH(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    const { id, ...rest } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Blog ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
+
+    // Check if category exists
+    const existingBlog = await Post.findById(id);
+    if (!existingBlog) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // Update the category
+    const updatedCategory = await Post.findByIdAndUpdate(id, rest, {
+      new: true,
+    });
+
+    return NextResponse.json(
+      { success: true, category: updatedCategory },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating category:", error);
+    return NextResponse.json(
+      { error: "Failed to update blog" },
+      { status: 500 }
+    );
+  }
+}
