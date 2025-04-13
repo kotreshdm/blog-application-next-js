@@ -1,13 +1,18 @@
 import React from "react";
-
+interface Posts {
+  id: number;
+  _id: number;
+  name: string;
+  createdAt: string;
+}
 export default function DisplayPost({
   data,
   handleEdit,
   handleDelete,
 }: {
-  data: { id: string; name: string }[];
-  handleEdit: (post: { id: string; name: string }) => void;
-  handleDelete: (post: { id: string; name: string }) => void;
+  data: Posts[];
+  handleEdit: (post: Posts) => void;
+  handleDelete: (post: Posts) => void;
 }) {
   return (
     <table className='table-auto w-full border-collapse border border-gray-300'>
@@ -19,7 +24,7 @@ export default function DisplayPost({
         </tr>
       </thead>
       <tbody>
-        {data.map((post: { id: string; name: string }, index: number) => (
+        {data.map((post: Posts, index: number) => (
           <tr key={post.name}>
             <td className='border border-gray-300 px-4 py-2'>{index + 1}</td>
             <td className='border border-gray-300 px-4 py-2'>{post.name}</td>

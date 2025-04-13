@@ -54,7 +54,8 @@ export default function Posts() {
     },
     onError: (error) => {
       console.error("Error:", error);
-      toast.error(error.response.data.error || "Something went wrong!!! ");
+      toast.error("Something went wrong!!! ");
+      // toast.error(error.response.data.error || "Something went wrong!!! ");
     },
   });
 
@@ -71,7 +72,7 @@ export default function Posts() {
     },
     onError: (error) => {
       console.error("Error:", error);
-      toast.error(error.response.data.error || "Something went wrong!!! ");
+      toast.error("Something went wrong!!! ");
     },
   });
 
