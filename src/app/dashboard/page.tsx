@@ -2,16 +2,15 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
-import Pageheader from "./components/page-header/Pageheader";
 import Loading from "./components/loading/Loading";
 import ErrorPage from "./components/error-page/ErrorPage";
 import { useDashboardContext } from "@/utils/context/DashboardContext";
+import Pageheader from "./components/page-header/PageHeader";
 
 export default function DashboardPage() {
   const ctx = useDashboardContext();
 
-  console.log(ctx);
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["dashboardData"],
     queryFn: async () => {
       const response = await axiosInstance.get("/dashboard/dashboard-data");
@@ -22,7 +21,8 @@ export default function DashboardPage() {
 
   return (
     <div className='p-6'>
-      <Pageheader refresh={refetch} title='Dashboard' />
+      {/* <Pageheader refresh={refetch} title='Dashboard' /> */}
+      <Pageheader />
       {isLoading && <Loading />}
       {isError && <ErrorPage />}
 
