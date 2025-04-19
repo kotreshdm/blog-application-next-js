@@ -38,7 +38,6 @@ type MyContextType = {
   postState: postStateType;
   categoryState: categoryStateType;
   fetchPosts: () => void;
-
   fetchCategories: () => void;
 };
 
@@ -49,12 +48,22 @@ const DashboardContext = createContext<MyContextType>({
   fetchCategories: () => {},
 });
 
+// type actionPostsType = {
+//   type: "SET_POSTS" | "SET_LOADING" | "SET_ERROR";
+//   payload: string | PostType[] | boolean;
+// };
+
+// type actionCategoryType = {
+//   type: "SET_CATEGORIES" | "SET_LOADING" | "SET_ERROR";
+//   payload: string | CategoryType[] | boolean;
+// };
+
 export default function DashboardContextProvoider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const postReducer = (state: any, action: any) => {
+  const postReducer = (state: postStateType, action) => {
     switch (action.type) {
       case "SET_POSTS":
         return { ...state, posts: action.payload };
@@ -67,7 +76,7 @@ export default function DashboardContextProvoider({
     }
   };
 
-  const catReducer = (state: any, action: any) => {
+  const catReducer = (state: categoryStateType, action) => {
     switch (action.type) {
       case "SET_CATEGORIES":
         return { ...state, categories: action.payload };
