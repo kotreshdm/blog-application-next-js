@@ -123,6 +123,7 @@ export default function DashboardContextProvoider({
       const data = await response.json();
       postDispatch({ type: "SET_POSTS", payload: data });
     } catch (error) {
+      console.error("Error fetching posts:", error);
       postDispatch({
         type: "SET_ERROR",
         payload: "Failed to fetch posts",
@@ -147,6 +148,7 @@ export default function DashboardContextProvoider({
       const data = await response.json();
       categoryDispatch({ type: "SET_CATEGORIES", payload: data });
     } catch (error) {
+      console.error("Error fetching categories:", error);
       categoryDispatch({
         type: "SET_ERROR",
         payload: "Failed to fetch categories",
