@@ -1,4 +1,5 @@
 "use client";
+import { Anybody } from "next/font/google";
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 
 export type PostType = {
@@ -48,22 +49,22 @@ const DashboardContext = createContext<MyContextType>({
   fetchCategories: () => {},
 });
 
-// type actionPostsType = {
-//   type: "SET_POSTS" | "SET_LOADING" | "SET_ERROR";
-//   payload: string | PostType[] | boolean;
-// };
+type actionPostsType = {
+  type: "SET_POSTS" | "SET_LOADING" | "SET_ERROR";
+  payload: string | PostType[] | boolean;
+};
 
-// type actionCategoryType = {
-//   type: "SET_CATEGORIES" | "SET_LOADING" | "SET_ERROR";
-//   payload: string | CategoryType[] | boolean;
-// };
+type actionCategoryType = {
+  type: "SET_CATEGORIES" | "SET_LOADING" | "SET_ERROR";
+  payload: string | CategoryType[] | boolean;
+};
 
 export default function DashboardContextProvoider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const postReducer = (state: postStateType, action) => {
+  const postReducer = (state: postStateType, action: actionPostsType | any) => {
     switch (action.type) {
       case "SET_POSTS":
         return { ...state, posts: action.payload };
@@ -76,7 +77,10 @@ export default function DashboardContextProvoider({
     }
   };
 
-  const catReducer = (state: categoryStateType, action) => {
+  const catReducer = (
+    state: categoryStateType,
+    action: actionCategoryType | any
+  ) => {
     switch (action.type) {
       case "SET_CATEGORIES":
         return { ...state, categories: action.payload };
