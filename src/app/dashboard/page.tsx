@@ -7,14 +7,15 @@ import Pageheader from "./components/page-header/PageHeader";
 export default function DashboardPage() {
   const { postState, categoryState, fetchCategories, fetchPosts } =
     useDashboardContext();
+
+  const refreshFunction = () => {
+    fetchPosts();
+    fetchCategories();
+  };
+
   return (
     <div className='p-6'>
-      <Pageheader
-        title='Dashboard'
-        onRefresh={() => {
-          fetchCategories(), fetchPosts();
-        }}
-      />
+      <Pageheader title='Dashboard' onRefresh={refreshFunction} />
       <div className='flex gap-6 justify-center'>
         <Link href='/dashboard/posts'>
           <div className='flex-1 p-6 border rounded-lg shadow-md text-center'>
