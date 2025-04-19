@@ -1,5 +1,4 @@
 "use client";
-import { Anybody } from "next/font/google";
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 
 export type PostType = {
@@ -13,7 +12,7 @@ export type CategoryType = {
   name: string;
   createdAt: string;
 };
-type postStateType = {
+type PostState = {
   posts: PostType[];
   loading: boolean;
   error: string | null;
@@ -24,7 +23,7 @@ type categoryStateType = {
   error: string | null;
 };
 
-const initialPostState: postStateType = {
+const initialPostState: PostState = {
   posts: [],
   loading: false,
   error: null,
@@ -36,7 +35,7 @@ const initialCategoryState: categoryStateType = {
 };
 
 type MyContextType = {
-  postState: postStateType;
+  postState: PostState;
   categoryState: categoryStateType;
   fetchPosts: () => void;
   fetchCategories: () => void;
@@ -49,22 +48,22 @@ const DashboardContext = createContext<MyContextType>({
   fetchCategories: () => {},
 });
 
-type actionPostsType = {
-  type: "SET_POSTS" | "SET_LOADING" | "SET_ERROR";
-  payload: string | PostType[] | boolean;
-};
+type PostAction =
+  | { type: "SET_POSTS"; payload: PostType[] }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null };
 
-type actionCategoryType = {
-  type: "SET_CATEGORIES" | "SET_LOADING" | "SET_ERROR";
-  payload: string | CategoryType[] | boolean;
-};
+type CategoryAction =
+  | { type: "SET_CATEGORIES"; payload: CategoryType[] }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null };
 
 export default function DashboardContextProvoider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const postReducer = (state: postStateType, action: actionPostsType | any) => {
+  const postReducer = (state: PostState, action: PostAction) => {
     switch (action.type) {
       case "SET_POSTS":
         return { ...state, posts: action.payload };
@@ -77,10 +76,7 @@ export default function DashboardContextProvoider({
     }
   };
 
-  const catReducer = (
-    state: categoryStateType,
-    action: actionCategoryType | any
-  ) => {
+  const catReducer = (state: categoryStateType, action: CategoryAction) => {
     switch (action.type) {
       case "SET_CATEGORIES":
         return { ...state, categories: action.payload };
