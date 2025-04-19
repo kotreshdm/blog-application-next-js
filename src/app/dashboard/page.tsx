@@ -1,49 +1,46 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
 import Loading from "./components/loading/Loading";
-import ErrorPage from "./components/error-page/ErrorPage";
 import { useDashboardContext } from "@/utils/context/DashboardContext";
 import Pageheader from "./components/page-header/PageHeader";
 
 export default function DashboardPage() {
-  const ctx = useDashboardContext();
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["dashboardData"],
-    queryFn: async () => {
-      const response = await axiosInstance.get("/dashboard/dashboard-data");
-      return response.data;
-    },
-    enabled: true,
-  });
-
+  const { postState, categoryState, fetchCategories, fetchPosts } =
+    useDashboardContext();
   return (
     <div className='p-6'>
-      {/* <Pageheader refresh={refetch} title='Dashboard' /> */}
-      <Pageheader />
-      {isLoading && <Loading />}
-      {isError && <ErrorPage />}
-
-      {data && (
-        <div className='flex gap-6 justify-center'>
-          <Link href='/dashboard/posts'>
-            <div className='flex-1 p-6 border rounded-lg shadow-md text-center'>
-              <h2 className='text-lg font-semibold'>Total Posts</h2>
-              <p className='text-3xl font-bold text-blue-600'>{data.posts}</p>
-            </div>
-          </Link>
-          <Link href='/dashboard/categories'>
-            <div className='flex-1 p-6  border rounded-lg shadow-md text-center'>
-              <h2 className='text-lg font-semibold'>Total Categories</h2>
-              <p className='text-3xl font-bold text-green-600'>
-                {data.categories}
+      <Pageheader
+        title='Dashboard'
+        onRefresh={() => {
+          fetchCategories(), fetchPosts();
+        }}
+      />
+      <div className='flex gap-6 justify-center'>
+        <Link href='/dashboard/posts'>
+          <div className='flex-1 p-6 border rounded-lg shadow-md text-center'>
+            <h2 className='text-lg font-semibold'>Total Posts</h2>
+            {postState.loading ? (
+              <Loading />
+            ) : (
+              <p className='text-3xl font-bold text-blue-600'>
+                {postState.posts.length}
               </p>
-            </div>
-          </Link>
-        </div>
-      )}
+            )}
+          </div>
+        </Link>
+        <Link href='/dashboard/categories'>
+          <div className='flex-1 p-6  border rounded-lg shadow-md text-center'>
+            <h2 className='text-lg font-semibold'>Total Categories</h2>
+            {categoryState.loading ? (
+              <Loading />
+            ) : (
+              <p className='text-3xl font-bold text-green-600'>
+                {categoryState.categories.length}
+              </p>
+            )}
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }

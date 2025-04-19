@@ -5,7 +5,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from "@/components/modal/Modal";
 import toast from "react-hot-toast";
 import Category from "@/models/Category";
-import Pageheader from "../components/page-header/PageHeader";
 
 interface Category {
   id: number;
@@ -105,7 +104,6 @@ export default function Categories() {
           Add New
         </button>
       </div>
-      <Pageheader title='Categories' onRefresh={() => {}} />
 
       {isLoading && <p className='text-center'>Loading data...</p>}
       {isError && (
