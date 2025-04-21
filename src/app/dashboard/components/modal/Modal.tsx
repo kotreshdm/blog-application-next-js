@@ -19,7 +19,7 @@ export default function Modal({
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center'>
       <div className='bg-white p-6 rounded-md shadow-lg w-full max-w-md relative'>
         <div className='flex items-center justify-between mb-4'>
-          <h2 className='text-xl font-bold mb-4'>{title}</h2>
+          <h2 className='text-xl font-bold mb-4 text-black'>{title}</h2>
           <button
             onClick={onClose}
             className='absolute top-6 right-6 text-gray-500 hover:text-gray-700'

@@ -8,6 +8,7 @@ import {
 import Modal from "../components/modal/Modal";
 import axios, { AxiosError } from "axios";
 import LoadingModal from "../components/loading-modal/LoadingModal";
+import { DateFormt } from "@/utils/formmat-data/FormatData";
 
 const initialCategoryState: CategoryType = {
   _id: 0,
@@ -130,7 +131,7 @@ export default function Page() {
               <tr key={category._id}>
                 <td className='border p-2'>{category._id}</td>
                 <td className='border p-2'>{category.name}</td>
-                <td className='border p-2'>{category.createdAt}</td>
+                <td className='border p-2'>{DateFormt(category.createdAt)}</td>
                 <td className='border p-2'>
                   <button
                     onClick={() => openModal("edit", category)}
@@ -185,7 +186,7 @@ function CategoryForm({
         onChange={handleChange}
         type='text'
         id='category-name'
-        className='border border-gray-300 p-2 rounded'
+        className='border border-gray-300 p-2 rounded text-black'
         required
         readOnly={readOnly}
       />
