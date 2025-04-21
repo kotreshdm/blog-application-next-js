@@ -8,6 +8,7 @@ export type PostType = {
   createdAt: string;
 };
 export type CategoryType = {
+  _id: number;
   id: number;
   name: string;
   createdAt: string;
@@ -39,11 +40,13 @@ type MyContextType = {
   categoryState: categoryStateType;
   fetchPosts: () => void;
   fetchCategories: () => void;
+  categoryDispatch: React.Dispatch<CategoryAction>;
 };
 
 const DashboardContext = createContext<MyContextType>({
   postState: initialPostState,
   categoryState: initialCategoryState,
+  categoryDispatch: () => {},
   fetchPosts: () => {},
   fetchCategories: () => {},
 });
@@ -75,7 +78,6 @@ export default function DashboardContextProvoider({
         return state;
     }
   };
-
   const catReducer = (state: categoryStateType, action: CategoryAction) => {
     switch (action.type) {
       case "SET_CATEGORIES":
@@ -94,14 +96,6 @@ export default function DashboardContextProvoider({
     catReducer,
     initialCategoryState
   );
-  // const [PerPageCount, setPerPageCount] = useState(10);
-  // const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
-  // const [modalType, setModalType] = useState<"add" | "edit" | "delete" | null>(
-  //   null
-  // );
-
-  // const toatalPages = Math.ceil(posts.length / PerPageCount);
-  // const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchPosts();
@@ -160,7 +154,13 @@ export default function DashboardContextProvoider({
 
   return (
     <DashboardContext.Provider
-      value={{ postState, categoryState, fetchPosts, fetchCategories }}
+      value={{
+        postState,
+        categoryState,
+        fetchPosts,
+        fetchCategories,
+        categoryDispatch,
+      }}
     >
       {children}
     </DashboardContext.Provider>

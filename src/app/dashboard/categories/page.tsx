@@ -1,239 +1,194 @@
 "use client";
-import { useState } from "react";
-import axiosInstance from "@/utils/axiosInstance";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Modal from "@/components/modal/Modal";
-import toast from "react-hot-toast";
-import Category from "@/models/Category";
+import React, { useEffect, useState } from "react";
 import Pageheader from "../components/page-header/PageHeader";
+import {
+  CategoryType,
+  useDashboardContext,
+} from "@/utils/context/DashboardContext";
+import Modal from "../components/modal/Modal";
+import axios from "axios";
+import LoadingModal from "../components/loading-modal/LoadingModal";
 
-interface Category {
-  id: number;
-  _id: number;
-  name: string;
-  createdAt: string;
-}
+const initialCategoryState: CategoryType = {
+  _id: 0,
+  id: 0,
+  name: "",
+  createdAt: "",
+};
 
-type ModalType = "add" | "edit" | "delete" | null;
-
-export default function Categories() {
-  const queryClient = useQueryClient();
-  const [modalType, setModalType] = useState<ModalType>(null);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+export default function Page() {
+  // ===== STATE =====
+  const { categoryState, fetchCategories } = useDashboardContext();
+  const [selectedCategory, setSelectedCategory] =
+    useState(initialCategoryState);
+  const [modalType, setModalType] = useState<"add" | "edit" | "delete" | null>(
     null
   );
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { data, isLoading, isError } = useQuery<Category[]>({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const response = await axiosInstance.get<Category[]>(
-        `/dashboard/categories`
-      );
-      return response.data;
-    },
-  });
+  // ===== EFFECTS =====
+  useEffect(() => {
+    setError("");
+  }, [modalType]);
 
-  // Add & Edit Mutation
-  const mutation = useMutation({
-    mutationFn: async (category: Partial<Category>) => {
-      if (modalType === "edit" && category.id) {
-        return axiosInstance.put(`/dashboard/categories`, category);
-      } else {
-        return axiosInstance.post(`/dashboard/categories`, category);
+  // ===== HANDLERS =====
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      if (modalType === "add") {
+        await axios.post("/api/dashboard/categories", selectedCategory);
+      } else if (modalType === "edit") {
+        await axios.put("/api/dashboard/categories", selectedCategory);
+      } else if (modalType === "delete") {
+        await axios.delete("/api/dashboard/categories", {
+          data: { id: selectedCategory._id },
+        });
       }
-    },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      if (modalType === "edit") {
-        toast.success(
-          response.data.message || `Category updated successfully!!! `
-        );
-      } else {
-        toast.success(
-          response.data.message || `Category created successfully!!! `
-        );
-      }
+
       setModalType(null);
-    },
-    onError: (error) => {
-      console.error("Error:", error);
-      toast.error(`Failed to create: ${"An unknown error occurred."}`);
-    },
-  });
+      setSelectedCategory(initialCategoryState);
+      fetchCategories();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Delete Mutation
-  const deleteMutation = useMutation<void, Error, number>({
-    mutationFn: async (id: number) => {
-      await axiosInstance.delete(`/dashboard/categories`, { data: { id } });
-    },
+  const openModal = (
+    type: "add" | "edit" | "delete",
+    category?: CategoryType
+  ) => {
+    setSelectedCategory(category || initialCategoryState);
+    setModalType(type);
+  };
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      setModalType(null);
-      toast.success(
-        `Category deleted  successfully....! ${selectedCategory?.name} `
-      );
-    },
-    onError: (error: unknown) => {
-      console.error("Error deleting category:", error);
-      toast.error(`Failed to delete category: An unknown error occurred.`);
-    },
-  });
+  const renderModal = () => {
+    if (!modalType) return null;
 
-  function handleAdd() {
-    setSelectedCategory(null);
-    setModalType("add");
-  }
+    const titles = {
+      add: "Add Category",
+      edit: "Edit Category",
+      delete: "Delete Category",
+    };
 
-  function handleEdit(category: Category) {
-    setSelectedCategory(category);
-    setModalType("edit");
-  }
+    return (
+      <Modal
+        title={titles[modalType]}
+        onClose={() => setModalType(null)}
+        submitButtonText={
+          modalType === "delete"
+            ? "Delete Category"
+            : modalType === "edit"
+            ? "Update"
+            : "Submit"
+        }
+        disabled={loading}
+        onSubmit={handleSubmit}
+      >
+        <CategoryForm
+          category={selectedCategory}
+          onChange={setSelectedCategory}
+          readOnly={modalType === "delete"}
+          error={error}
+          setError={setError}
+        />
+      </Modal>
+    );
+  };
 
-  function handleDelete(category: Category) {
-    setSelectedCategory(category);
-    setModalType("delete");
-  }
+  // ===== RETURN =====
   return (
     <div className='p-6'>
-      <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-2xl font-bold'>Categories</h1>
-        <button
-          onClick={handleAdd}
-          className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md'
-        >
-          Add New
-        </button>
-      </div>
-      <Pageheader title='Categories' onRefresh={() => {}} />
+      <Pageheader
+        title='Categories'
+        onAdd={() => openModal("add")}
+        onRefresh={fetchCategories}
+      />
 
-      {isLoading && <p className='text-center'>Loading data...</p>}
-      {isError && (
-        <p className='text-center text-red-500'>Failed to fetch data.</p>
+      {categoryState.error && (
+        <p className='text-red-600'>{categoryState.error}</p>
+      )}
+      {!categoryState.loading && categoryState.categories.length === 0 && (
+        <p>No categories found.</p>
       )}
 
-      {data && (
-        <div className='overflow-x-auto'>
-          <table className='w-full border-collapse border border-gray-200'>
-            <thead>
-              <tr className=''>
-                <th className='border border-gray-300 px-4 py-2 text-left'>
-                  SL No
-                </th>
-                <th className='border border-gray-300 px-4 py-2 text-left'>
-                  Name
-                </th>
-                <th className='border border-gray-300 px-4 py-2 text-left'>
-                  Created At
-                </th>
-                <th className='border border-gray-300 px-4 py-2 text-left'>
-                  Actions
-                </th>
+      {categoryState.categories.length > 0 && (
+        <table className='min-w-full border-collapse border border-gray-200 mt-4'>
+          <thead>
+            <tr>
+              <th className='border p-2'>ID</th>
+              <th className='border p-2'>Name</th>
+              <th className='border p-2'>Created At</th>
+              <th className='border p-2'>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categoryState.categories.map((category) => (
+              <tr key={category._id}>
+                <td className='border p-2'>{category._id}</td>
+                <td className='border p-2'>{category.name}</td>
+                <td className='border p-2'>{category.createdAt}</td>
+                <td className='border p-2'>
+                  <button
+                    onClick={() => openModal("edit", category)}
+                    className='bg-yellow-500 text-white px-2 py-1 rounded'
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => openModal("delete", category)}
+                    className='bg-red-500 text-white px-2 py-1 rounded ml-2'
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.map((category, index) => (
-                <tr key={category._id} className=''>
-                  <td className='border border-gray-300 px-4 py-2'>
-                    {index + 1}
-                  </td>
-                  <td className='border border-gray-300 px-4 py-2'>
-                    {category.name}
-                  </td>
-                  <td className='border border-gray-300 px-4 py-2'>
-                    {new Date(category.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className='border border-gray-300 px-4 py-2 space-x-2'>
-                    <button
-                      onClick={() => handleEdit(category)}
-                      className='bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md'
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(category)}
-                      className='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md'
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       )}
 
-      {/* Add / Edit Modal */}
-      {modalType === "add" || modalType === "edit" ? (
-        <Modal onClose={() => setModalType(null)}>
-          <h2 className='text-xl font-semibold text-gray-900'>
-            {modalType === "edit" ? "Edit Category" : "Add New Category"}
-          </h2>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const category: Partial<Category> = {
-                id: selectedCategory?._id,
-                name: formData.get("name") as string,
-              };
-              mutation.mutate(category);
-            }}
-            className='mt-4'
-          >
-            <input
-              type='text'
-              name='name'
-              defaultValue={selectedCategory?.name || ""}
-              placeholder='Category Name'
-              className='w-full p-2 border border-gray-300 rounded  text-gray-900'
-              required
-            />
-            <div className='mt-4 flex justify-end space-x-2'>
-              <button
-                type='button'
-                onClick={() => setModalType(null)}
-                className='px-4 py-2 bg-gray-400 text-white rounded-md'
-              >
-                Cancel
-              </button>
-              <button
-                type='submit'
-                className='px-4 py-2 bg-blue-500 text-white rounded-md'
-              >
-                {modalType === "edit" ? "Update" : "Add"}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      ) : null}
-
-      {/* Delete Confirmation Modal */}
-      {modalType === "delete" && selectedCategory ? (
-        <Modal onClose={() => setModalType(null)}>
-          <h2 className='text-gray-900 text-xl font-semibold text-center'>
-            Confirm Delete
-          </h2>
-          <p className='text-center text-gray-700'>
-            Are you sure you want to delete &#34;{selectedCategory.name}&#34;?
-          </p>
-          <div className='mt-4 flex justify-center space-x-2'>
-            <button
-              onClick={() => setModalType(null)}
-              className='px-4 py-2 bg-gray-400 text-white rounded-md'
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => deleteMutation.mutate(selectedCategory._id)}
-              className='px-4 py-2 bg-red-500 text-white rounded-md'
-            >
-              Delete
-            </button>
-          </div>
-        </Modal>
-      ) : null}
+      {categoryState.loading && <LoadingModal />}
+      {renderModal()}
     </div>
+  );
+}
+
+// ===== REUSABLE FORM COMPONENT =====
+function CategoryForm({
+  category,
+  onChange,
+  readOnly = false,
+  error,
+  setError,
+}: {
+  category: CategoryType;
+  onChange: (c: CategoryType) => void;
+  readOnly?: boolean;
+  error: string;
+  setError: (val: string) => void;
+}) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ ...category, name: e.target.value });
+    setError(""); // clear the error on input change
+  };
+  return (
+    <form className='flex flex-col gap-4'>
+      <label htmlFor='category-name' className='text-gray-700'>
+        Category Name:
+      </label>
+      <input
+        value={category.name}
+        onChange={handleChange}
+        type='text'
+        id='category-name'
+        className='border border-gray-300 p-2 rounded'
+        required
+        readOnly={readOnly}
+      />
+      {error && <p className='text-red-500'>{error}</p>}
+    </form>
   );
 }

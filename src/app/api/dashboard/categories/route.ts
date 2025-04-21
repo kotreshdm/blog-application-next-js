@@ -94,7 +94,7 @@ export async function PUT(request: Request) {
     await dbConnect();
 
     // Fetch category before deleting
-    const { name, id } = await request.json();
+    const { name, _id: id } = await request.json();
 
     //check if the name is already existe and also of the is is same category
     if (!name) {
