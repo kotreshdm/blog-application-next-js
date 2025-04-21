@@ -49,7 +49,7 @@ export default function Page() {
       setModalType(null);
       setSelectedCategory(initialCategoryState);
       fetchCategories();
-    } catch (err: any) {
+    } catch (err) {
       setError(err?.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import { useDashboardContext } from "@/utils/context/DashboardContext";
 
 export default function page() {
   const { postState, fetchPosts } = useDashboardContext();
+  console.log(postState);
   return (
     <div className='p-6'>
       <Pageheader title='Posts' onRefresh={fetchPosts} />
