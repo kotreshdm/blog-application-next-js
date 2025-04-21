@@ -6,7 +6,7 @@ import {
   useDashboardContext,
 } from "@/utils/context/DashboardContext";
 import Modal from "../components/modal/Modal";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import LoadingModal from "../components/loading-modal/LoadingModal";
 
 const initialCategoryState: CategoryType = {
@@ -50,7 +50,8 @@ export default function Page() {
       setSelectedCategory(initialCategoryState);
       fetchCategories();
     } catch (err) {
-      setError(err?.response?.data?.error || "Something went wrong");
+      const error = err as AxiosError<{ error: string }>;
+      setError(error?.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);
     }
