@@ -17,7 +17,7 @@ const initialCategoryState: CategoryType = {
   createdAt: "",
 };
 
-export default function Page() {
+export default function CategoriesPage() {
   // ===== STATE =====
   const { categoryState, fetchCategories } = useDashboardContext();
   const [selectedCategory, setSelectedCategory] =

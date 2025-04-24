@@ -20,7 +20,6 @@ export async function GET() {
     );
   }
 }
-
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -36,7 +35,7 @@ export async function POST(req: Request) {
 
     await dbConnect();
 
-    const { name, ...rest } = await req.json();
+    const { name } = await req.json();
 
     if (!name) {
       return NextResponse.json(
@@ -66,7 +65,6 @@ export async function POST(req: Request) {
       name,
       slug,
       createdBy,
-      ...rest,
     });
 
     // Save to the database
@@ -84,7 +82,6 @@ export async function POST(req: Request) {
     );
   }
 }
-
 export async function DELETE(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -125,7 +122,7 @@ export async function DELETE(req: Request) {
     );
   }
 }
-export async function PATCH(req: Request) {
+export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -136,7 +133,7 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const { id, ...rest } = await req.json();
+    const { _id: id, ...rest } = await req.json();
 
     if (!id) {
       return NextResponse.json(
