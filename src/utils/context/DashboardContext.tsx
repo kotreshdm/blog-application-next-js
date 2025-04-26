@@ -6,6 +6,7 @@ export type PostType = {
   _id: number;
   name: string;
   createdAt: string;
+  seoKeyword?: string;
 };
 export type CategoryType = {
   _id: number;

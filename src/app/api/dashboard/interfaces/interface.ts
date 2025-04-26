@@ -15,4 +15,5 @@ export interface DeleteRequestBody {
 export interface PutRequestBody {
   _id: string;
   name: string;
+  seoKeyword: string;
 }

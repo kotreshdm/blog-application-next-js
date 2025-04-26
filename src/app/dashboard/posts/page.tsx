@@ -9,12 +9,20 @@ import Modal from "../components/modal/Modal";
 import axios, { AxiosError } from "axios";
 import LoadingModal from "../components/loading-modal/LoadingModal";
 import { DateFormt } from "@/utils/formmat-data/FormatData";
+import PostForm from "../components/modal/PostForm";
+import { PostErrorType } from "../interface/interfaces";
 
 const initialPostState: PostType = {
   _id: 0,
   id: 0,
   name: "",
   createdAt: "",
+  seoKeyword: "",
+};
+
+const initialErrorState: PostErrorType = {
+  name: "",
+  seoKeyword: "",
 };
 
 export default function PostsPage() {
@@ -24,12 +32,12 @@ export default function PostsPage() {
   const [modalType, setModalType] = useState<"add" | "edit" | "delete" | null>(
     null
   );
-  const [error, setError] = useState("");
+  const [error, setError] = useState<PostErrorType>(initialErrorState);
   const [loading, setLoading] = useState(false);
 
   // ===== EFFECTS =====
   useEffect(() => {
-    setError("");
+    setError(initialErrorState);
   }, [modalType]);
 
   // ===== HANDLERS =====
@@ -51,7 +59,10 @@ export default function PostsPage() {
       fetchPosts();
     } catch (err) {
       const error = err as AxiosError<{ error: string }>;
-      setError(error?.response?.data?.error || "Something went wrong");
+      setError({
+        seoKeyword: "",
+        name: error?.response?.data?.error || "Something went wrong",
+      });
     } finally {
       setLoading(false);
     }
@@ -85,12 +96,14 @@ export default function PostsPage() {
         disabled={loading}
         onSubmit={handleSubmit}
       >
-        <CategoryForm
+        <PostForm
           post={selectedPost}
           onChange={setSelectedPost}
           readOnly={modalType === "delete"}
           error={error}
           setError={setError}
+          isEditing={modalType === "edit"}
+          initialErrorState={initialErrorState}
         />
       </Modal>
     );
@@ -149,42 +162,5 @@ export default function PostsPage() {
       {postState.loading && <LoadingModal />}
       {renderModal()}
     </div>
-  );
-}
-
-// ===== REUSABLE FORM COMPONENT =====
-function CategoryForm({
-  post,
-  onChange,
-  readOnly = false,
-  error,
-  setError,
-}: {
-  post: PostType;
-  onChange: (c: PostType) => void;
-  readOnly?: boolean;
-  error: string;
-  setError: (val: string) => void;
-}) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...post, name: e.target.value });
-    setError(""); // clear the error on input change
-  };
-  return (
-    <form className='flex flex-col gap-4'>
-      <label htmlFor='category-name' className='text-gray-700'>
-        Post Name:
-      </label>
-      <input
-        value={post.name}
-        onChange={handleChange}
-        type='text'
-        id='post-name'
-        className='border border-gray-300 p-2 rounded text-black'
-        required
-        readOnly={readOnly}
-      />
-      {error && <p className='text-red-500'>{error}</p>}
-    </form>
   );
 }

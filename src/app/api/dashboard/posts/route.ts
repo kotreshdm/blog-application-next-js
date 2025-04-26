@@ -93,7 +93,7 @@ export async function DELETE(req: Request) {
 export async function PUT(req: Request) {
   try {
     await authenticateUser();
-    const { _id: id, name }: PutRequestBody = await req.json();
+    const { _id: id, name, seoKeyword }: PutRequestBody = await req.json();
     if (!id || !name) return errorResponse("Blog ID and name are required");
 
     await dbConnect();
@@ -105,7 +105,7 @@ export async function PUT(req: Request) {
       return errorResponse("Blog already exists");
     }
 
-    await Post.findByIdAndUpdate(id, { name, slug }, { new: true });
+    await Post.findByIdAndUpdate(id, { name, slug, seoKeyword }, { new: true });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

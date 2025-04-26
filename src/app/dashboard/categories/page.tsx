@@ -9,6 +9,7 @@ import Modal from "../components/modal/Modal";
 import axios, { AxiosError } from "axios";
 import LoadingModal from "../components/loading-modal/LoadingModal";
 import { DateFormt } from "@/utils/formmat-data/FormatData";
+import InputField from "../components/form/input/InputField";
 
 const initialCategoryState: CategoryType = {
   _id: 0,
@@ -178,19 +179,15 @@ function CategoryForm({
   };
   return (
     <form className='flex flex-col gap-4'>
-      <label htmlFor='category-name' className='text-gray-700'>
-        Category Name:
-      </label>
-      <input
+      <InputField
+        label={"Category Name:"}
         value={category.name}
         onChange={handleChange}
-        type='text'
         id='category-name'
-        className='border border-gray-300 p-2 rounded text-black'
         required
         readOnly={readOnly}
+        error={error}
       />
-      {error && <p className='text-red-500'>{error}</p>}
     </form>
   );
 }
