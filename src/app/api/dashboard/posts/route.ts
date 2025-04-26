@@ -4,166 +4,116 @@ import Post from "@/models/Post";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import slugify from "slugify";
+import {
+  CreateRequestBody,
+  DeleteRequestBody,
+  ErrorWithStatus,
+  PutRequestBody,
+} from "../interfaces/interface";
+import { authenticateUser, errorResponse } from "../utils/helpes";
+
+async function findPostOrFail(id: string) {
+  const post = await Post.findById(id);
+  if (!post) {
+    throw { status: 404, message: "Blog not found" } as ErrorWithStatus;
+  }
+  return post;
+}
+
+function createSlug(name: string): string {
+  return slugify(name, { lower: true, strict: true });
+}
 
 export async function GET() {
   try {
     await dbConnect();
     const posts = await Post.find().sort({ createdAt: -1 });
-    // const categories = await Category.countDocuments();
-
     return NextResponse.json(posts, { status: 200 });
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch data" },
-      { status: 500 }
-    );
+    return errorResponse("Failed to fetch data", 500);
   }
 }
+
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
-    }
-
-    const createdBy = session.user.id;
-
+    const createdBy = await authenticateUser();
     await dbConnect();
+    const { name }: CreateRequestBody = await req.json();
 
-    const { name } = await req.json();
-
-    if (!name) {
-      return NextResponse.json(
-        { error: "Blog name is required" },
-        { status: 400 }
+    if (!name || name.length > 200) {
+      return errorResponse(
+        !name
+          ? "Blog name is required"
+          : "Blog name must be under 200 characters"
       );
     }
 
-    if (name.length > 200) {
-      return NextResponse.json(
-        { error: "Blog name is not more then 200 char" },
-        { status: 400 }
-      );
-    }
-    const slug = slugify(name, { lower: true, strict: true });
-    // Check if category already exists
-    const existingBlog = await Post.findOne({ slug });
-    if (existingBlog) {
-      return NextResponse.json(
-        { error: "Blog already exists" },
-        { status: 400 }
-      );
+    const slug = createSlug(name);
+    if (await Post.findOne({ slug })) {
+      return errorResponse("Blog already exists");
     }
 
-    // Create a new category
-    const newCategory = new Post({
-      name,
-      slug,
-      createdBy,
-    });
-
-    // Save to the database
-    await newCategory.save();
-
+    const newPost = await Post.create({ name, slug, createdBy });
     return NextResponse.json(
-      { success: true, category: newCategory },
+      { success: true, category: newPost },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating category:", error);
-    return NextResponse.json(
-      { error: "Failed to create blog" },
-      { status: 500 }
+    const err = error as ErrorWithStatus;
+    console.error("Error creating blog:", err);
+    return errorResponse(
+      err.message || "Failed to create blog",
+      err.status || 500
     );
   }
 }
+
 export async function DELETE(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
-    }
-
-    const { id } = await req.json();
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Blog ID is required" },
-        { status: 400 }
-      );
-    }
+    await authenticateUser();
+    const { id }: DeleteRequestBody = await req.json();
+    if (!id) return errorResponse("Blog ID is required");
 
     await dbConnect();
-
-    // Check if category exists
-    const existingBlog = await Post.findById(id);
-    if (!existingBlog) {
-      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
-    }
-
-    // Delete the category
+    await findPostOrFail(id);
     await Post.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("Error deleting category:", error);
-    return NextResponse.json(
-      { error: "Failed to delete blog" },
-      { status: 500 }
+    const err = error as ErrorWithStatus;
+    console.error("Error deleting blog:", err);
+    return errorResponse(
+      err.message || "Failed to delete blog",
+      err.status || 500
     );
   }
 }
+
 export async function PUT(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 }
-      );
-    }
-
-    const { _id: id, ...rest } = await req.json();
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Blog ID is required" },
-        { status: 400 }
-      );
-    }
+    await authenticateUser();
+    const { _id: id, name }: PutRequestBody = await req.json();
+    if (!id || !name) return errorResponse("Blog ID and name are required");
 
     await dbConnect();
+    await findPostOrFail(id);
 
-    // Check if category exists
-    const existingBlog = await Post.findById(id);
-    if (!existingBlog) {
-      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    const slug = createSlug(name);
+    const existingSlug = await Post.findOne({ slug });
+    if (existingSlug && existingSlug._id.toString() !== id) {
+      return errorResponse("Blog already exists");
     }
 
-    // Update the category
-    const updatedCategory = await Post.findByIdAndUpdate(id, rest, {
-      new: true,
-    });
+    await Post.findByIdAndUpdate(id, { name, slug }, { new: true });
 
-    return NextResponse.json(
-      { success: true, category: updatedCategory },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("Error updating category:", error);
-    return NextResponse.json(
-      { error: "Failed to update blog" },
-      { status: 500 }
+    const err = error as ErrorWithStatus;
+    console.error("Error updating blog:", err);
+    return errorResponse(
+      err.message || "Failed to update blog",
+      err.status || 500
     );
   }
 }
