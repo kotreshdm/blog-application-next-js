@@ -11,6 +11,7 @@ import LoadingModal from "../components/loading-modal/LoadingModal";
 import { DateFormt } from "@/utils/formmat-data/FormatData";
 import PostForm from "../components/modal/PostForm";
 import { PostErrorType } from "../interface/interfaces";
+import { useRouter } from "next/navigation";
 
 const initialPostState: PostType = {
   _id: 0,
@@ -27,11 +28,11 @@ const initialErrorState: PostErrorType = {
 
 export default function PostsPage() {
   // ===== STATE =====
+  const router = useRouter();
   const { postState, fetchPosts } = useDashboardContext();
   const [selectedPost, setSelectedPost] = useState(initialPostState);
-  const [modalType, setModalType] = useState<"add" | "edit" | "delete" | null>(
-    null
-  );
+  const [modalType, setModalType] = useState<"add" | "delete" | null>(null);
+
   const [error, setError] = useState<PostErrorType>(initialErrorState);
   const [loading, setLoading] = useState(false);
 
@@ -46,8 +47,6 @@ export default function PostsPage() {
     try {
       if (modalType === "add") {
         await axios.post("/api/dashboard/posts", selectedPost);
-      } else if (modalType === "edit") {
-        await axios.put("/api/dashboard/posts", selectedPost);
       } else if (modalType === "delete") {
         await axios.delete("/api/dashboard/posts", {
           data: { id: selectedPost._id },
@@ -68,7 +67,7 @@ export default function PostsPage() {
     }
   };
 
-  const openModal = (type: "add" | "edit" | "delete", post?: PostType) => {
+  const openModal = (type: "add" | "delete", post?: PostType) => {
     setSelectedPost(post || initialPostState);
     setModalType(type);
   };
@@ -86,13 +85,7 @@ export default function PostsPage() {
       <Modal
         title={titles[modalType]}
         onClose={() => setModalType(null)}
-        submitButtonText={
-          modalType === "delete"
-            ? "Delete Post"
-            : modalType === "edit"
-            ? "Update"
-            : "Submit"
-        }
+        submitButtonText={modalType === "delete" ? "Delete Post" : "Submit"}
         disabled={loading}
         onSubmit={handleSubmit}
       >
@@ -102,7 +95,6 @@ export default function PostsPage() {
           readOnly={modalType === "delete"}
           error={error}
           setError={setError}
-          isEditing={modalType === "edit"}
           initialErrorState={initialErrorState}
         />
       </Modal>
@@ -141,7 +133,7 @@ export default function PostsPage() {
                 <td className='border p-2'>{DateFormt(post.createdAt)}</td>
                 <td className='border p-2'>
                   <button
-                    onClick={() => openModal("edit", post)}
+                    onClick={() => router.push(`/dashboard/posts/${post._id}`)}
                     className='bg-yellow-500 text-white px-2 py-1 rounded'
                   >
                     Edit
