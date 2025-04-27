@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/utils/dbConnect";
 import Post from "@/models/Post";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/authOptions";
 import slugify from "slugify";
 import {
   CreateRequestBody,
