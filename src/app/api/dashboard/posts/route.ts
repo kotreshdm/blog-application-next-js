@@ -9,6 +9,11 @@ import {
   PutRequestBody,
 } from "../interfaces/interface";
 import { authenticateUser, errorResponse } from "../utils/helpes";
+import mongoose from "mongoose";
+enum BlogStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
 
 async function findPostOrFail(id: string) {
   const post = await Post.findById(id);
@@ -90,11 +95,43 @@ export async function DELETE(req: Request) {
   }
 }
 
+function isValidObjectId(id: string): boolean {
+  return mongoose.isValidObjectId(id);
+}
+
 export async function PUT(req: Request) {
   try {
     await authenticateUser();
-    const { _id: id, name, seoKeyword }: PutRequestBody = await req.json();
-    if (!id || !name) return errorResponse("Blog ID and name are required");
+    const {
+      _id: id,
+      name,
+      seoKeyword,
+      category,
+      seoDescription,
+      shortDescription,
+      description,
+      image,
+      blogStatus,
+    }: PutRequestBody = await req.json();
+    if (!id) return errorResponse("Blog ID is required");
+    if (!name) return errorResponse("Blog name is required");
+    if (!category) return errorResponse("Blog category is required");
+    if (!shortDescription)
+      return errorResponse("Short Description is required");
+    if (!seoDescription) return errorResponse("SEO Description is required");
+    if (!description) return errorResponse("Blog Description is required");
+    if (!image) return errorResponse("Blog Image URL is required");
+    if (!blogStatus) return errorResponse("Blog Status is required");
+
+    if (!Object.values(blogStatus).includes(blogStatus as BlogStatus)) {
+      return errorResponse(
+        "Invalid blog status. Must be 'active' or 'inactive'"
+      );
+    }
+    // Validate category ObjectId
+    if (!isValidObjectId(category)) {
+      return errorResponse("Invalid category ID");
+    }
 
     await dbConnect();
     await findPostOrFail(id);
@@ -102,10 +139,24 @@ export async function PUT(req: Request) {
     const slug = createSlug(name);
     const existingSlug = await Post.findOne({ slug });
     if (existingSlug && existingSlug._id.toString() !== id) {
-      return errorResponse("Blog already exists");
+      return errorResponse("Blog name is already exists");
     }
 
-    await Post.findByIdAndUpdate(id, { name, slug, seoKeyword }, { new: true });
+    await Post.findByIdAndUpdate(
+      id,
+      {
+        name,
+        slug,
+        seoKeyword,
+        category,
+        seoDescription,
+        shortDescription,
+        description,
+        image,
+        blogStatus,
+      },
+      { new: true }
+    );
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

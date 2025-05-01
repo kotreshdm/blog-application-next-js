@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { use } from "react";
 import Pageheader from "../../components/page-header/PageHeader";
-import { useDashboardContext } from "@/utils/context/DashboardContext";
-import axios from "axios";
+// import { useDashboardContext } from "@/utils/context/DashboardContext";
 import InputField from "../../components/form/input/InputField";
-import SelectField from "../../components/form/input/SelectField";
+// import SelectField from "../../components/form/input/SelectField";
+import axios from "axios";
 
 interface EditPostProps {
   params: Promise<{ id: string }>;
@@ -28,7 +28,7 @@ export default function EditPost({ params }: EditPostProps) {
   const [inputError, setInputError] = useState(initialPostState);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const { categoryState, fetchPosts } = useDashboardContext();
+  // const { categoryState, fetchPosts } = useDashboardContext();
 
   async function getPost(id: string) {
     setError("");
@@ -58,17 +58,48 @@ export default function EditPost({ params }: EditPostProps) {
     }));
   };
 
-  const handleSelectChange = (value: string) => {
-    setEditingPost((prev) => ({
-      ...prev,
-      category: value,
-    }));
-  };
+  // const handleSelectChange = (value: string) => {
+  //   setEditingPost((prev) => ({
+  //     ...prev,
+  //     category: value,
+  //   }));
+  // };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting post:", editingPost);
-    // you can call your update API here
+    setLoading(true);
+    setError(""); // Clear any previous error messages
+
+    try {
+      const response = await axios.put(`/api/dashboard/posts`, editingPost);
+      console.log("response", response);
+      // Handle success (e.g., show a success message or redirect)
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        // Axios error
+        if (err.response) {
+          // Server responded with a status other than 2xx
+          const serverMessage =
+            err.response.data?.message ||
+            "An error occurred while updating the post.";
+          setError(serverMessage);
+        } else if (err.request) {
+          // Request was made but no response received
+          setError(
+            "No response received from the server. Please check your network connection."
+          );
+        } else {
+          // Something happened in setting up the request
+          setError(`Request error: ${err.message}`);
+        }
+      } else {
+        // Non-Axios error
+        setError("An unexpected error occurred.");
+      }
+      console.error("Error updating post:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -81,15 +112,6 @@ export default function EditPost({ params }: EditPostProps) {
       <div className='p-6'>
         <Pageheader title='Edit Post' />
         <div>Loading post data...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='p-6'>
-        <Pageheader title='Edit Post' />
-        <div className='text-red-500'>{error}</div>
       </div>
     );
   }
@@ -223,7 +245,7 @@ export default function EditPost({ params }: EditPostProps) {
             error={inputError.blogStatus}
           />
         </div>
-
+        {error && <p>{error}</p>}
         {/* Action Buttons */}
         <div className='col-span-1 md:col-span-2 flex gap-4 justify-end mt-6'>
           <button
