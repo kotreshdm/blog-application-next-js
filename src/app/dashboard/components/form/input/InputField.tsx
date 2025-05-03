@@ -4,6 +4,7 @@ export interface InputFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  id?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({

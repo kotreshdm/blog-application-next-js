@@ -10,10 +10,6 @@ import {
 } from "../interfaces/interface";
 import { authenticateUser, errorResponse } from "../utils/helpes";
 import mongoose from "mongoose";
-enum BlogStatus {
-  ACTIVE = "active",
-  INACTIVE = "inactive",
-}
 
 async function findPostOrFail(id: string) {
   const post = await Post.findById(id);
@@ -122,8 +118,7 @@ export async function PUT(req: Request) {
     if (!description) return errorResponse("Blog Description is required");
     if (!image) return errorResponse("Blog Image URL is required");
     if (!blogStatus) return errorResponse("Blog Status is required");
-
-    if (!Object.values(blogStatus).includes(blogStatus as BlogStatus)) {
+    if (blogStatus !== "active" && blogStatus !== "inactive") {
       return errorResponse(
         "Invalid blog status. Must be 'active' or 'inactive'"
       );

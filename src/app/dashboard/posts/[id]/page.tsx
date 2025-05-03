@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { use } from "react";
 import Pageheader from "../../components/page-header/PageHeader";
-// import { useDashboardContext } from "@/utils/context/DashboardContext";
+import { useDashboardContext } from "@/utils/context/DashboardContext";
 import InputField from "../../components/form/input/InputField";
 // import SelectField from "../../components/form/input/SelectField";
 import axios from "axios";
+import SelectField from "../../components/form/input/SelectField";
 
 interface EditPostProps {
   params: Promise<{ id: string }>;
@@ -28,13 +29,14 @@ export default function EditPost({ params }: EditPostProps) {
   const [inputError, setInputError] = useState(initialPostState);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  // const { categoryState, fetchPosts } = useDashboardContext();
+  const { categoryState } = useDashboardContext();
 
   async function getPost(id: string) {
     setError("");
     setLoading(true);
     try {
-      const response = await axios.get(`/api/dashboard/posts/${id}`);
+      const response = await axios.post(`/api/dashboard/posts/id`, { id });
+      console.log(response);
       setEditingPost(response.data);
     } catch (error) {
       console.error("Error fetching post:", error);
@@ -51,19 +53,19 @@ export default function EditPost({ params }: EditPostProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInputError(initialPostState);
+    setInputError((prev) => ({ ...prev, [name]: "" }));
     setEditingPost((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  // const handleSelectChange = (value: string) => {
-  //   setEditingPost((prev) => ({
-  //     ...prev,
-  //     category: value,
-  //   }));
-  // };
+  const handleSelectChange = (value: string) => {
+    setEditingPost((prev) => ({
+      ...prev,
+      category: value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,9 +82,15 @@ export default function EditPost({ params }: EditPostProps) {
         if (err.response) {
           // Server responded with a status other than 2xx
           const serverMessage =
-            err.response.data?.message ||
+            err.response.data?.error ||
             "An error occurred while updating the post.";
           setError(serverMessage);
+          if (serverMessage.includes("name")) {
+            setInputError({ ...inputError, name: serverMessage });
+          }
+          if (serverMessage.includes("category")) {
+            setInputError({ ...inputError, category: serverMessage });
+          }
         } else if (err.request) {
           // Request was made but no response received
           setError(
@@ -103,8 +111,7 @@ export default function EditPost({ params }: EditPostProps) {
   };
 
   const handleCancel = () => {
-    console.log("Cancelled editing");
-    // maybe reset form or redirect
+    //router.push("/dashboard/posts"); // or wherever your post list is
   };
 
   if (loading) {
@@ -125,28 +132,29 @@ export default function EditPost({ params }: EditPostProps) {
       >
         {/* Post Name */}
         <div className='flex flex-col'>
-          <label htmlFor='post-name' className='mb-1 font-medium text-gray-700'>
-            Post Name:
-          </label>
           <InputField
             value={editingPost.name ?? ""}
             onChange={handleChange}
             id='post-name'
             name='name'
             required
+            label='Post Name'
             error={inputError.name}
           />
         </div>
-
+        <div className='flex flex-col'>
+          <SelectField
+            label='Category'
+            id='post-category'
+            options={categoryState.categories}
+            selectedCategory={editingPost.category ?? ""}
+            handleChange={handleSelectChange}
+          />
+        </div>
         {/* Short Description */}
         <div className='flex flex-col'>
-          <label
-            htmlFor='post-shortDescription'
-            className='mb-1 font-medium text-gray-700'
-          >
-            Short Description:
-          </label>
           <InputField
+            label={" Short Description:"}
             value={editingPost.shortDescription ?? ""}
             onChange={handleChange}
             id='post-shortDescription'
@@ -155,34 +163,21 @@ export default function EditPost({ params }: EditPostProps) {
             error={inputError.shortDescription}
           />
         </div>
-
-        {/* Seo Description */}
         <div className='flex flex-col'>
-          <label
-            htmlFor='post-seoDescription'
-            className='mb-1 font-medium text-gray-700'
-          >
-            Seo Description:
-          </label>
           <InputField
             value={editingPost.seoDescription ?? ""}
             onChange={handleChange}
             id='post-seoDescription'
             name='seoDescription'
+            label={"Description:"}
             required
             error={inputError.seoDescription}
           />
         </div>
 
-        {/* Seo Keyword */}
         <div className='flex flex-col'>
-          <label
-            htmlFor='post-seoKeyword'
-            className='mb-1 font-medium text-gray-700'
-          >
-            Seo Keyword:
-          </label>
           <InputField
+            label={" Seo Keyword:"}
             value={editingPost.seoKeyword ?? ""}
             onChange={handleChange}
             id='post-seoKeyword'
@@ -194,13 +189,8 @@ export default function EditPost({ params }: EditPostProps) {
 
         {/* Description */}
         <div className='flex flex-col'>
-          <label
-            htmlFor='post-description'
-            className='mb-1 font-medium text-gray-700'
-          >
-            Description:
-          </label>
           <InputField
+            label={" Description"}
             value={editingPost.description ?? ""}
             onChange={handleChange}
             id='post-description'
@@ -212,36 +202,26 @@ export default function EditPost({ params }: EditPostProps) {
 
         {/* Image */}
         <div className='flex flex-col'>
-          <label
-            htmlFor='post-image'
-            className='mb-1 font-medium text-gray-700'
-          >
-            Image:
-          </label>
           <InputField
             value={editingPost.image ?? ""}
             onChange={handleChange}
             id='post-image'
             name='image'
             required
+            label={"Image"}
             error={inputError.image}
           />
         </div>
 
         {/* Blog Status */}
         <div className='flex flex-col'>
-          <label
-            htmlFor='post-blogStatus'
-            className='mb-1 font-medium text-gray-700'
-          >
-            Blog Status:
-          </label>
           <InputField
             value={editingPost.blogStatus ?? ""}
             onChange={handleChange}
-            id='post-blogStatus'
-            name='blogStatus'
+            id='post-status'
+            name='status'
             required
+            label={"Status"}
             error={inputError.blogStatus}
           />
         </div>

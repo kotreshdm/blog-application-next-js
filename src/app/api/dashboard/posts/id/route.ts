@@ -3,12 +3,9 @@ import dbConnect from "@/utils/dbConnect";
 import Post from "@/models/Post";
 import { authenticateUser } from "../../utils/helpes";
 
-export async function GET(
-  request: Request,
-  context: { params: { id: string } }
-) {
+export async function POST(req: Request) {
   try {
-    const { id } = context.params;
+    const { id } = await req.json();
 
     await authenticateUser();
     await dbConnect();
