@@ -146,6 +146,7 @@ export default function EditPost({ params }: EditPostProps) {
           <SelectField
             label='Category'
             id='post-category'
+            error={editingPost.category}
             options={categoryState.categories}
             selectedCategory={editingPost.category ?? ""}
             handleChange={handleSelectChange}

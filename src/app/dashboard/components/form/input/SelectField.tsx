@@ -37,6 +37,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           </option>
         ))}
       </select>
+      {error && <p className='text-red-500'>{error}</p>}
     </>
   );
 };
